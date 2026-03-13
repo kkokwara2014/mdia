@@ -6,22 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('payment_types', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('uuid')->unique();
+            $table->string('name')->unique();
             $table->decimal('amount', 10, 2);
             $table->timestamps();
+
+            $table->index('uuid');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('payment_types');

@@ -5,23 +5,49 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Payment extends Model
 {
     protected $fillable = [
+        'uuid',
         'user_id',
         'payment_type_id',
         'amount',
+        'year',
+        'payment_date',
+        'notes',
         'status',
         'verified_by',
         'verified_at',
     ];
 
+    protected $hidden = [
+        'id',
+    ];
+
     protected function casts(): array
     {
         return [
+            'payment_date' => 'date',
             'verified_at' => 'datetime',
         ];
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->uuid)) {
+                $model->uuid = (string) Str::uuid();
+            }
+        });
     }
 
     public function user(): BelongsTo
