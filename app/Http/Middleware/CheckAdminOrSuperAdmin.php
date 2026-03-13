@@ -11,10 +11,13 @@ class CheckAdminOrSuperAdmin
     public function handle(Request $request, Closure $next): Response
     {
         if (!$request->user() || !($request->user()->hasPermission('admin') || $request->user()->hasPermission('super_admin'))) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized. Admin access required.',
-            ], 403);
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized. Admin access required.',
+                ], 403);
+            }
+            return redirect()->route('dashboard')->with('error', 'Unauthorized. Admin access required.');
         }
 
         return $next($request);

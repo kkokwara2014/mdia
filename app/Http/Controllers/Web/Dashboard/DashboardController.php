@@ -24,7 +24,7 @@ class DashboardController extends Controller
             ->where('status', 'pending')
             ->sum('amount');
 
-        $data['member_breakdown_by_payment_type'] = Payment::where('user_id', $user->id)
+        $data['member_breakdown'] = Payment::where('user_id', $user->id)
             ->select('payment_type_id', DB::raw('
                 SUM(CASE WHEN status = "verified" THEN amount ELSE 0 END) as verified_total,
                 SUM(CASE WHEN status = "pending" THEN amount ELSE 0 END) as pending_total,

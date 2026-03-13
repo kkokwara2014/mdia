@@ -1,87 +1,52 @@
-@extends('adminlte::auth.login')
+@extends('layouts.auth')
 
-@section('adminlte_css')
-    <link rel="stylesheet" href="{{ asset('css/mdia-theme.css') }}">
-    @stack('css')
-    @yield('css')
-@stop
+@section('title', 'Sign in')
 
-@section('auth_header', 'Sign in to start your session')
-
-@section('auth_body')
-    <form action="{{ route('login.submit') }}" method="post">
-        @csrf
-
-        <div class="input-group mb-3">
-            <input type="email" 
-                   name="email" 
-                   class="form-control @error('email') is-invalid @enderror" 
-                   placeholder="Email"
-                   value="{{ old('email') }}"
-                   required
-                   autofocus>
-            <div class="input-group-append">
-                <div class="input-group-text">
-                    <span class="fas fa-envelope"></span>
-                </div>
+@section('content')
+<div class="container-tight py-4">
+    <div class="text-center mb-4">
+        <img src="{{ asset('assets/transparent_circulr_logo.png') }}" alt="" width="80" height="80" class="rounded" style="object-fit: contain;">
+        <h2 class="mt-2">{{ config('app.name') }}</h2>
+    </div>
+    <div class="card card-md">
+        <div class="card-body">
+            <h2 class="card-title text-center mb-4">Sign in to your account</h2>
+            @if($errors->any())
+            <div class="alert alert-danger" role="alert">
+                <ul class="mb-0 list-unstyled">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
-            @error('email')
-                <span class="invalid-feedback d-block" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-            @enderror
-        </div>
-
-        <div class="input-group mb-3">
-            <input type="password" 
-                   name="password" 
-                   class="form-control @error('password') is-invalid @enderror" 
-                   placeholder="Password"
-                   required>
-            <div class="input-group-append">
-                <div class="input-group-text">
-                    <span class="fas fa-lock"></span>
+            @endif
+            <form action="{{ route('login.submit') }}" method="post" autocomplete="off">
+                @csrf
+                <div class="mb-3">
+                    <label class="form-label">Email address</label>
+                    <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="Email" value="{{ old('email') }}" required autofocus>
+                    @error('email')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
-            </div>
-            @error('password')
-                <span class="invalid-feedback d-block" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-            @enderror
-        </div>
-
-        <div class="row">
-            <div class="col-7">
-                <div class="icheck-primary">
-                    <input type="checkbox" id="remember" name="remember" value="1">
-                    <label for="remember">
-                        Remember Me
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Password" required>
+                    @error('password')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="mb-3">
+                    <label class="form-check">
+                        <input type="checkbox" name="remember" class="form-check-input" value="1">
+                        <span class="form-check-label">Remember me</span>
                     </label>
                 </div>
-            </div>
-            <div class="col-5">
-                <button type="submit" class="btn btn-primary btn-block">Sign In</button>
-            </div>
+                <div class="form-footer">
+                    <button type="submit" class="btn btn-primary w-100">Sign in</button>
+                </div>
+            </form>
         </div>
-    </form>
-@stop
-
-@section('auth_footer')
-@stop
-
-@push('css')
-<style>
-    .login-logo img {
-        max-width: 60px !important;
-        max-height: 60px !important;
-        width: 60px !important;
-        height: 60px !important;
-        object-fit: contain;
-        margin-bottom: 10px;
-    }
-    .login-logo a {
-        color: transparent;
-        font-size: 0;
-    }
-</style>
-@endpush
+    </div>
+</div>
+@endsection

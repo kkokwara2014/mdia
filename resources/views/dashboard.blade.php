@@ -2,83 +2,104 @@
 
 @section('title', 'Dashboard')
 
-@section('page_title', 'Dashboard')
-
-@section('page_content')
-    <div class="row">
-        <div class="col-lg-6 col-6">
-            <div class="small-box mdia-box-green">
-                <div class="inner">
-                    <h3>${{ number_format($member_total_paid, 2) }}</h3>
-                    <p>My Total Paid</p>
-                </div>
-                <div class="icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-            </div>
+@section('content')
+<div class="page-header d-print-none mb-3">
+    <div class="row g-2 align-items-center">
+        <div class="col">
+            <h2 class="page-title">Dashboard</h2>
         </div>
+    </div>
+</div>
 
-        <div class="col-lg-6 col-6">
-            <div class="small-box mdia-box-gold">
-                <div class="inner">
-                    <h3>${{ number_format($member_total_pending, 2) }}</h3>
-                    <p>My Pending Payments</p>
-                </div>
-                <div class="icon">
-                    <i class="fas fa-clock"></i>
+<div class="row row-deck row-cards mb-3">
+    <div class="col-sm-6 col-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <span class="avatar avatar-md bg-green-lt text-green me-3">
+                        <i class="ti ti-circle-check"></i>
+                    </span>
+                    <div>
+                        <div class="text-secondary text-uppercase fw-bold small">My Total Paid</div>
+                        <div class="h2 mb-0">${{ number_format($member_total_paid ?? 0, 2) }}</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
+    <div class="col-sm-6 col-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <span class="avatar avatar-md bg-yellow-lt text-yellow me-3">
+                        <i class="ti ti-clock"></i>
+                    </span>
+                    <div>
+                        <div class="text-secondary text-uppercase fw-bold small">My Pending Payments</div>
+                        <div class="h2 mb-0">${{ number_format($member_total_pending ?? 0, 2) }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     @if(auth()->user()->hasPermission('validate_payment'))
-    <div class="row">
-        <div class="col-lg-4 col-6">
-            <div class="small-box mdia-box-green">
-                <div class="inner">
-                    <h3>{{ $total_members }}</h3>
-                    <p>Total Members</p>
-                </div>
-                <div class="icon">
-                    <i class="fas fa-users"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4 col-6">
-            <div class="small-box mdia-box-red">
-                <div class="inner">
-                    <h3>${{ number_format($total_verified_collections, 2) }}</h3>
-                    <p>Total Collections</p>
-                </div>
-                <div class="icon">
-                    <i class="fas fa-money-bill-wave"></i>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <span class="avatar avatar-md bg-blue-lt text-blue me-3">
+                        <i class="ti ti-users"></i>
+                    </span>
+                    <div>
+                        <div class="text-secondary text-uppercase fw-bold small">Total Members</div>
+                        <div class="h2 mb-0">{{ $total_members ?? 0 }}</div>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="col-lg-4 col-6">
-            <div class="small-box mdia-box-gold">
-                <div class="inner">
-                    <h3>${{ number_format($total_pending_collections, 2) }}</h3>
-                    <p>Total Pending</p>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <span class="avatar avatar-md bg-green-lt text-green me-3">
+                        <i class="ti ti-cash"></i>
+                    </span>
+                    <div>
+                        <div class="text-secondary text-uppercase fw-bold small">Total Collections</div>
+                        <div class="h2 mb-0">${{ number_format($total_verified_collections ?? 0, 2) }}</div>
+                    </div>
                 </div>
-                <div class="icon">
-                    <i class="fas fa-hourglass-half"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <span class="avatar avatar-md bg-yellow-lt text-yellow me-3">
+                        <i class="ti ti-hourglass"></i>
+                    </span>
+                    <div>
+                        <div class="text-secondary text-uppercase fw-bold small">Total Pending</div>
+                        <div class="h2 mb-0">${{ number_format($total_pending_collections ?? 0, 2) }}</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     @endif
+</div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">My Payment Summary</h3>
-                </div>
-                <div class="card-body">
-                    <table class="table table-bordered table-striped">
+<div class="row row-deck row-cards">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">My Payment Summary</h3>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-vcenter card-table table-striped">
                         <thead>
                             <tr>
                                 <th>Payment Type</th>
@@ -88,16 +109,16 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($member_breakdown_by_payment_type as $breakdown)
+                            @forelse($member_breakdown ?? [] as $row)
                             <tr>
-                                <td>{{ $breakdown->paymentType->name }}</td>
-                                <td>${{ number_format($breakdown->verified_total, 2) }}</td>
-                                <td>${{ number_format($breakdown->pending_total, 2) }}</td>
-                                <td>{{ $breakdown->count }}</td>
+                                <td>{{ $row->paymentType?->name ?? '—' }}</td>
+                                <td>${{ number_format($row->verified_total ?? 0, 2) }}</td>
+                                <td>${{ number_format($row->pending_total ?? 0, 2) }}</td>
+                                <td>{{ $row->count ?? 0 }}</td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="4" class="text-center">No payment types found</td>
+                                <td colspan="4" class="text-center text-secondary py-4">No payment records found</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -107,14 +128,14 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">My Recent Payments</h3>
-                </div>
-                <div class="card-body">
-                    <table class="table table-bordered table-striped">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">My Recent Payments</h3>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-vcenter card-table table-striped">
                         <thead>
                             <tr>
                                 <th>Payment Type</th>
@@ -125,23 +146,23 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($member_recent_payments as $payment)
+                            @forelse($member_recent_payments ?? [] as $payment)
                             <tr>
-                                <td>{{ $payment->paymentType->name }}</td>
-                                <td>${{ number_format($payment->amount, 2) }}</td>
-                                <td>{{ $payment->year }}</td>
+                                <td>{{ $payment->paymentType?->name ?? '—' }}</td>
+                                <td>${{ number_format($payment->amount ?? 0, 2) }}</td>
+                                <td>{{ $payment->year ?? '—' }}</td>
                                 <td>
-                                    @if($payment->status === 'verified')
-                                        <span class="badge badge-success">Verified</span>
+                                    @if(($payment->status ?? '') === 'verified')
+                                    <span class="badge bg-success">Verified</span>
                                     @else
-                                        <span class="badge badge-warning">Pending</span>
+                                    <span class="badge bg-yellow">Pending</span>
                                     @endif
                                 </td>
-                                <td>{{ $payment->payment_date->format('M d, Y') }}</td>
+                                <td>{{ $payment->payment_date?->format('M j, Y') ?? '—' }}</td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="text-center">No payments found</td>
+                                <td colspan="5" class="text-center text-secondary py-4">No payments found</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -152,14 +173,14 @@
     </div>
 
     @if(auth()->user()->hasPermission('validate_payment'))
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Payment Type Breakdown</h3>
-                </div>
-                <div class="card-body">
-                    <table class="table table-bordered table-striped">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Payment Type Breakdown</h3>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-vcenter card-table table-striped">
                         <thead>
                             <tr>
                                 <th>Payment Type</th>
@@ -169,16 +190,16 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($breakdown_by_payment_type as $breakdown)
+                            @forelse($breakdown_by_payment_type ?? [] as $row)
                             <tr>
-                                <td>{{ $breakdown->name }}</td>
-                                <td>${{ number_format($breakdown->verified_total, 2) }}</td>
-                                <td>${{ number_format($breakdown->pending_total, 2) }}</td>
-                                <td>{{ $breakdown->count }}</td>
+                                <td>{{ $row->name ?? '—' }}</td>
+                                <td>${{ number_format($row->verified_total ?? 0, 2) }}</td>
+                                <td>${{ number_format($row->pending_total ?? 0, 2) }}</td>
+                                <td>{{ $row->count ?? 0 }}</td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="4" class="text-center">No payment types found</td>
+                                <td colspan="4" class="text-center text-secondary py-4">No payment types found</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -188,17 +209,17 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Recent Payments</h3>
-                </div>
-                <div class="card-body">
-                    <table class="table table-bordered table-striped">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Recent Payments</h3>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-vcenter card-table table-striped">
                         <thead>
                             <tr>
-                                <th>Member Name</th>
+                                <th>Member</th>
                                 <th>Payment Type</th>
                                 <th>Amount</th>
                                 <th>Year</th>
@@ -207,24 +228,24 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($recent_payments as $payment)
+                            @forelse($recent_payments ?? [] as $payment)
                             <tr>
-                                <td>{{ $payment->user->name }}</td>
-                                <td>{{ $payment->paymentType->name }}</td>
-                                <td>${{ number_format($payment->amount, 2) }}</td>
-                                <td>{{ $payment->year }}</td>
+                                <td>{{ $payment->user?->name ?? '—' }}</td>
+                                <td>{{ $payment->paymentType?->name ?? '—' }}</td>
+                                <td>${{ number_format($payment->amount ?? 0, 2) }}</td>
+                                <td>{{ $payment->year ?? '—' }}</td>
                                 <td>
-                                    @if($payment->status === 'verified')
-                                        <span class="badge badge-success">Verified</span>
+                                    @if(($payment->status ?? '') === 'verified')
+                                    <span class="badge bg-success">Verified</span>
                                     @else
-                                        <span class="badge badge-warning">Pending</span>
+                                    <span class="badge bg-yellow">Pending</span>
                                     @endif
                                 </td>
-                                <td>{{ $payment->payment_date->format('M d, Y') }}</td>
+                                <td>{{ $payment->payment_date?->format('M j, Y') ?? '—' }}</td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="text-center">No payments found</td>
+                                <td colspan="6" class="text-center text-secondary py-4">No payments found</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -234,4 +255,5 @@
         </div>
     </div>
     @endif
-@stop
+</div>
+@endsection

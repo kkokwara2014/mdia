@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Web\Auth\AuthController;
 use App\Http\Controllers\Web\Dashboard\DashboardController;
+use App\Http\Controllers\Web\Member\MemberController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
@@ -14,13 +15,14 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/members', function () {
-        return view('members.index');
-    })->name('members.index');
-
-    Route::get('/members/create', function () {
-        return view('members.create');
-    })->name('members.create');
+    Route::middleware(['admin'])->group(function () {
+        Route::get('/members', [MemberController::class, 'index'])->name('members.index');
+        Route::get('/members/create', [MemberController::class, 'create'])->name('members.create');
+        Route::post('/members', [MemberController::class, 'store'])->name('members.store');
+        Route::get('/members/{user}', [MemberController::class, 'show'])->name('members.show');
+        Route::get('/members/{user}/edit', [MemberController::class, 'edit'])->name('members.edit');
+        Route::put('/members/{user}', [MemberController::class, 'update'])->name('members.update');
+    });
 
     Route::get('/payments', function () {
         return view('payments.index');

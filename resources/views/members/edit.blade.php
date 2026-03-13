@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Add Member')
+@section('title', 'Edit Member')
 
 @section('content')
 <div class="page-header d-print-none mb-3">
     <div class="row g-2 align-items-center">
         <div class="col">
-            <h2 class="page-title">Add Member</h2>
+            <h2 class="page-title">Edit {{ $member->name }}</h2>
         </div>
         <div class="col-auto ms-auto">
-            <a href="{{ route('members.index') }}" class="btn btn-outline-secondary">Back to Members</a>
+            <a href="{{ route('members.show', $member) }}" class="btn btn-outline-secondary">Back to Profile</a>
         </div>
     </div>
 </div>
@@ -31,38 +31,44 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('members.store') }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('members.update', $member) }}" enctype="multipart/form-data">
             @csrf
+            @method('PUT')
             <div class="mb-3">
                 <label class="form-label required">Name</label>
-                <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
+                <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $member->name) }}" required>
                 @error('name')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
             <div class="mb-3">
                 <label class="form-label required">Email</label>
-                <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
+                <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $member->email) }}" required>
                 @error('email')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
             <div class="mb-3">
                 <label class="form-label required">Phone</label>
-                <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}" required>
+                <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone', $member->phone) }}" required>
                 @error('phone')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
             <div class="mb-3">
                 <label class="form-label">User Image (optional)</label>
+                @if($member->user_image)
+                    <div class="mb-2">
+                        <img src="{{ \Illuminate\Support\Facades\Storage::url($member->user_image) }}" alt="{{ $member->name }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;">
+                    </div>
+                @endif
                 <input type="file" name="user_image" class="form-control @error('user_image') is-invalid @enderror" accept="image/jpeg,image/png,image/jpg,image/webp">
-                <small class="form-hint">Max file size: 2MB. Formats: JPG, PNG, WEBP</small>
+                <small class="form-hint">Leave empty to keep current image</small>
                 @error('user_image')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
-            <button type="submit" class="btn btn-primary">Add Member</button>
+            <button type="submit" class="btn btn-primary">Update Member</button>
         </form>
     </div>
 </div>

@@ -20,7 +20,7 @@ class UpdateMemberRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', Rule::unique('users')->ignore($userId)],
             'phone' => ['required', 'string', 'max:20', Rule::unique('users')->ignore($userId)],
-            'user_image' => ['nullable', 'string'],
+            'user_image' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
 }
