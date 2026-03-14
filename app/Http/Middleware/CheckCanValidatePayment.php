@@ -11,10 +11,14 @@ class CheckCanValidatePayment
     public function handle(Request $request, Closure $next): Response
     {
         if (!$request->user() || !$request->user()->hasPermission('validate_payment')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized. You do not have permission to validate payments.',
-            ], 403);
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized. You do not have permission to validate payments.',
+                ], 403);
+            }
+
+            return redirect()->route('dashboard')->with('error', 'You do not have permission to validate payments.');
         }
 
         return $next($request);

@@ -19,6 +19,8 @@ class StorePaymentRequest extends FormRequest
             'year' => ['required', 'integer', 'min:1900', 'max:' . date('Y')],
             'payment_date' => ['required', 'date'],
             'notes' => ['nullable', 'string'],
+            'evidence_files' => ['nullable', 'array'],
+            'evidence_files.*' => ['file', 'max:2048', 'mimes:jpeg,jpg,png,webp,pdf'],
         ];
     }
 }

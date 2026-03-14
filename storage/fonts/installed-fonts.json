@@ -1,0 +1,9 @@
+{
+    "space grotesk": {
+        "300": "SpaceGrotesk-Light",
+        "normal": "SpaceGrotesk-Regular",
+        "500": "SpaceGrotesk-Medium",
+        "600": "SpaceGrotesk-SemiBold",
+        "bold": "SpaceGrotesk-Bold"
+    }
+}

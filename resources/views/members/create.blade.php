@@ -62,6 +62,20 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
+            <div class="mb-3">
+                <label class="form-label">Roles</label>
+                <div class="row">
+                    @foreach($roles as $role)
+                    <div class="col-md-4">
+                        <label class="form-check">
+                            <input class="form-check-input" type="checkbox" name="roles[]" value="{{ $role->uuid }}" {{ in_array($role->uuid, old('roles', [])) ? 'checked' : '' }}>
+                            <span class="form-check-label">{{ $role->name }}</span>
+                        </label>
+                    </div>
+                    @endforeach
+                </div>
+                <small class="text-muted">If no role is selected, Member role will be assigned by default.</small>
+            </div>
             <button type="submit" class="btn btn-primary">Add Member</button>
         </form>
     </div>

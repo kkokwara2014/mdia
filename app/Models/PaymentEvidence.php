@@ -8,6 +8,8 @@ use Illuminate\Support\Str;
 
 class PaymentEvidence extends Model
 {
+    protected $table = 'payment_evidences';
+
     protected $fillable = [
         'uuid',
         'payment_id',

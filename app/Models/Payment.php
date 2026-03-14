@@ -67,6 +67,6 @@ class Payment extends Model
 
     public function evidences(): HasMany
     {
-        return $this->hasMany(PaymentEvidence::class);
+        return $this->hasMany(PaymentEvidence::class, 'payment_id', 'id');
     }
 }
