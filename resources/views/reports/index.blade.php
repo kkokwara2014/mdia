@@ -104,7 +104,7 @@
         <input type="hidden" id="filterMemberUuid">
         <div id="filterMemberResults"
              class="list-group shadow-sm"
-             style="position: absolute; top: 100%; left: 0; z-index: 9999; background: #ffffff; border: 1px solid #dee2e6; border-radius: 4px; max-height: 200px; overflow-y: auto; display: none; min-width: 250px;">
+             style="position: absolute; top: 100%; left: 0; z-index: 9999; background: #ffffff; border: 1px solid #dee2e6; border-radius: 4px; max-height: clamp(200px, 40vh, 300px); overflow-y: auto; display: none; min-width: clamp(200px, 50vw, 350px);">
         </div>
     </div>
     <div class="col-auto">
@@ -115,55 +115,47 @@
     </div>
 </div>
 
-<div id="summaryCards" class="row row-deck row-cards mb-3">
-    <div class="col-sm-6 col-lg-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <span class="avatar avatar-md bg-blue-lt text-blue me-3"><i class="ti ti-cash"></i></span>
-                    <div>
-                        <div class="text-secondary text-uppercase fw-bold small">Total Collections</div>
-                        <div class="h2 mb-0" id="summaryTotalCollections">$0.00</div>
-                    </div>
+<div id="summaryCards" class="row-cards stats-grid mb-3">
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex align-items-center" style="gap: var(--spacing-sm);">
+                <span class="avatar avatar-md bg-blue-lt text-blue"><i class="ti ti-cash"></i></span>
+                <div>
+                    <div class="text-secondary text-uppercase fw-bold small">Total Collections</div>
+                    <div class="h2 mb-0" id="summaryTotalCollections">$0.00</div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-sm-6 col-lg-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <span class="avatar avatar-md bg-green-lt text-green me-3"><i class="ti ti-circle-check"></i></span>
-                    <div>
-                        <div class="text-secondary text-uppercase fw-bold small">Total Verified</div>
-                        <div class="h2 mb-0" id="summaryTotalVerified">$0.00</div>
-                    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex align-items-center" style="gap: var(--spacing-sm);">
+                <span class="avatar avatar-md bg-green-lt text-green"><i class="ti ti-circle-check"></i></span>
+                <div>
+                    <div class="text-secondary text-uppercase fw-bold small">Total Verified</div>
+                    <div class="h2 mb-0" id="summaryTotalVerified">$0.00</div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-sm-6 col-lg-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <span class="avatar avatar-md bg-yellow-lt text-yellow me-3"><i class="ti ti-clock"></i></span>
-                    <div>
-                        <div class="text-secondary text-uppercase fw-bold small">Total Pending</div>
-                        <div class="h2 mb-0" id="summaryTotalPending">$0.00</div>
-                    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex align-items-center" style="gap: var(--spacing-sm);">
+                <span class="avatar avatar-md bg-yellow-lt text-yellow"><i class="ti ti-clock"></i></span>
+                <div>
+                    <div class="text-secondary text-uppercase fw-bold small">Total Pending</div>
+                    <div class="h2 mb-0" id="summaryTotalPending">$0.00</div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-sm-6 col-lg-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <span class="avatar avatar-md bg-azure-lt text-azure me-3"><i class="ti ti-receipt"></i></span>
-                    <div>
-                        <div class="text-secondary text-uppercase fw-bold small">Total Payments</div>
-                        <div class="h2 mb-0" id="summaryTotalPayments">0</div>
-                    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex align-items-center" style="gap: var(--spacing-sm);">
+                <span class="avatar avatar-md bg-azure-lt text-azure"><i class="ti ti-receipt"></i></span>
+                <div>
+                    <div class="text-secondary text-uppercase fw-bold small">Total Payments</div>
+                    <div class="h2 mb-0" id="summaryTotalPayments">0</div>
                 </div>
             </div>
         </div>

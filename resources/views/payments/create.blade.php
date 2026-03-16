@@ -42,15 +42,15 @@
                        autocomplete="off">
                 <div id="memberSearchResults"
                      class="list-group shadow-sm"
-                     style="position: absolute; top: 100%; left: 0; right: 0; z-index: 9999; background: #ffffff; border: 1px solid #dee2e6; border-radius: 4px; max-height: 250px; overflow-y: auto; display: none;">
+                     style="position: absolute; top: 100%; left: 0; right: 0; z-index: 9999; background: #ffffff; border: 1px solid #dee2e6; border-radius: 4px; max-height: clamp(200px, 40vh, 300px); overflow-y: auto; display: none;">
                 </div>
                 <input type="hidden"
                        id="selectedMemberUuid"
                        name="user_uuid"
                        value="{{ old('user_uuid') }}">
                 <div id="selectedMemberDisplay" class="mt-2" style="display: none;">
-                    <span class="badge bg-blue-lt px-2 py-1" id="selectedMemberName" style="font-size: 13px;"></span>
-                    <a href="#" id="clearMember" class="text-danger ms-2" style="font-size: 12px;">Clear</a>
+                    <span class="badge bg-blue-lt px-2 py-1" id="selectedMemberName" style="font-size: var(--font-size-sm);"></span>
+                    <a href="#" id="clearMember" class="text-danger ms-2" style="font-size: var(--font-size-xs);">Clear</a>
                 </div>
                 @error('user_uuid')
                     <div class="invalid-feedback d-block">{{ $message }}</div>

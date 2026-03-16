@@ -9,7 +9,7 @@
             <h2 class="page-title">Edit {{ $member->name }}</h2>
         </div>
         <div class="col-auto ms-auto">
-            <a href="{{ route('members.show', $member) }}" class="btn btn-outline-secondary">Back to Profile</a>
+            <a href="{{ route('members.show', ['user' => $member->uuid]) }}" class="btn btn-outline-secondary">Back to Profile</a>
         </div>
     </div>
 </div>
@@ -31,7 +31,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('members.update', $member) }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('members.update', ['user' => $member->uuid]) }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <div class="mb-3">
@@ -57,31 +57,29 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">User Image (optional)</label>
-                @if($member->user_image)
-                    <div class="mb-2">
-                        <img src="{{ \Illuminate\Support\Facades\Storage::url($member->user_image) }}" alt="{{ $member->name }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;">
-                    </div>
-                @endif
+                <div class="mb-2">
+                    <img src="{{ $member->getAvatarUrl() }}" alt="{{ $member->name }}" style="width: var(--avatar-md); height: var(--avatar-md); object-fit: cover; border-radius: 50%;">
+                </div>
                 <input type="file" name="user_image" class="form-control @error('user_image') is-invalid @enderror" accept="image/jpeg,image/png,image/jpg,image/webp">
                 <small class="form-hint">Leave empty to keep current image</small>
                 @error('user_image')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
+            @if(auth()->user()->hasPermission('super_admin'))
             <div class="mb-3">
                 <label class="form-label">Roles</label>
-                <div class="row">
+                <div class="checkbox-grid">
                     @foreach($roles as $role)
-                    <div class="col-md-4">
-                        <label class="form-check">
-                            <input class="form-check-input" type="checkbox" name="roles[]" value="{{ $role->uuid }}" {{ $member->roles->contains('uuid', $role->uuid) ? 'checked' : '' }}>
-                            <span class="form-check-label">{{ $role->name }}</span>
-                        </label>
-                    </div>
+                    <label class="form-check">
+                        <input class="form-check-input" type="checkbox" name="roles[]" value="{{ $role->uuid }}" {{ $member->roles->contains('uuid', $role->uuid) ? 'checked' : '' }}>
+                        <span class="form-check-label">{{ $role->name }}</span>
+                    </label>
                     @endforeach
                 </div>
                 <small class="text-muted">Select all roles that apply to this member.</small>
             </div>
+            @endif
             <button type="submit" class="btn btn-primary">Update Member</button>
         </form>
     </div>

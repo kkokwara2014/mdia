@@ -91,7 +91,7 @@
             <div class="mb-2">
                 @if($isImage)
                     <a href="{{ $url }}" target="_blank" rel="noopener">
-                        <img src="{{ $url }}" alt="Evidence" class="rounded border" style="max-width: 200px; object-fit: contain;">
+                        <img src="{{ $url }}" alt="Evidence" class="rounded border" style="max-width: clamp(150px, 50vw, 300px); object-fit: contain;">
                     </a>
                 @else
                     <a href="{{ $url }}" target="_blank" rel="noopener" download class="btn btn-outline-primary btn-sm">

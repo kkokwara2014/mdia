@@ -8,4 +8,115 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    
+    /* Fluid spacing scale using clamp() */
+    --spacing-xs: clamp(0.5rem, 1vw, 0.75rem);
+    --spacing-sm: clamp(0.75rem, 2vw, 1rem);
+    --spacing-md: clamp(1rem, 3vw, 1.5rem);
+    --spacing-lg: clamp(1.5rem, 4vw, 2.5rem);
+    --spacing-xl: clamp(2rem, 5vw, 4rem);
+    
+    /* Fluid typography scale */
+    --font-size-xs: clamp(0.75rem, 1.5vw, 0.875rem);
+    --font-size-sm: clamp(0.875rem, 2vw, 1rem);
+    --font-size-base: clamp(1rem, 2.5vw, 1.125rem);
+    --font-size-lg: clamp(1.125rem, 3vw, 1.5rem);
+    --font-size-xl: clamp(1.25rem, 3.5vw, 1.875rem);
+    --font-size-2xl: clamp(1.5rem, 4vw, 2.25rem);
+    --font-size-3xl: clamp(1.875rem, 5vw, 3rem);
+    
+    /* Fluid avatar/image sizes */
+    --avatar-sm: clamp(24px, 5vw, 32px);
+    --avatar-md: clamp(40px, 8vw, 60px);
+    --avatar-lg: clamp(60px, 12vw, 80px);
+    --avatar-xl: clamp(80px, 15vw, 120px);
+    
+    /* Card spacing tokens */
+    --card-padding: clamp(1rem, 3vw, 1.5rem);
+    --card-header-padding: clamp(0.75rem, 2.5vw, 1.25rem);
+    --card-gap: clamp(1rem, 2.5vw, 1.5rem);
+    --card-border-radius: clamp(0.375rem, 0.5vw, 0.5rem);
+    
+    /* Container max-width for readability */
+    --container-text: 75ch;
+    
+    /* Sidebar widths (can be clamp-based) */
+    --sidebar-width-expanded: clamp(12rem, 20vw, 16rem);
+    --sidebar-width-collapsed: clamp(3rem, 5vw, 4rem);
+}
+
+/* Responsive container padding */
+.container-fluid-responsive {
+    padding-left: clamp(1rem, 4vw, 3rem);
+    padding-right: clamp(1rem, 4vw, 3rem);
+}
+
+/* Responsive gap utilities */
+.gap-responsive-sm { gap: clamp(0.5rem, 2vw, 1rem); }
+.gap-responsive-md { gap: clamp(1rem, 3vw, 1.5rem); }
+.gap-responsive-lg { gap: clamp(1.5rem, 4vw, 2.5rem); }
+
+/* Text container for optimal reading width */
+.text-container { max-width: var(--container-text); }
+
+/* Responsive card utilities */
+.card-responsive {
+    border-radius: var(--card-border-radius);
+}
+
+.card-responsive .card-body,
+.card-body-responsive {
+    padding: var(--card-padding) !important;
+}
+
+.card-responsive .card-header,
+.card-header-responsive {
+    padding: var(--card-header-padding) !important;
+}
+
+.card-responsive .card-footer,
+.card-footer-responsive {
+    padding: var(--card-header-padding) !important;
+}
+
+/* Responsive row gaps for card grids */
+.row-cards-responsive {
+    gap: var(--card-gap);
+}
+
+/* Card grid with auto-fit for perfect stacking */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+    gap: var(--card-gap);
+}
+
+.card-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+    gap: var(--card-gap);
+}
+
+.card-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+    gap: var(--card-gap);
+}
+
+.card-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+    gap: var(--card-gap);
+}
+
+/* Checkbox grid for forms */
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+    gap: var(--spacing-sm);
+}
+
+/* Form group spacing */
+.form-group-responsive {
+    margin-bottom: var(--spacing-md);
 }

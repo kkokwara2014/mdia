@@ -32,7 +32,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         $adminRole = Role::firstOrCreate(['name' => 'Admin']);
         $adminRole->permissions()->sync(
-            Permission::whereIn('name', ['admin', 'manage_members', 'generate_reports'])->pluck('id')
+            Permission::whereIn('name', ['admin', 'manage_members', 'validate_payment', 'generate_reports'])->pluck('id')
         );
 
         $treasurerRole = Role::firstOrCreate(['name' => 'Treasurer']);

@@ -22,9 +22,12 @@ class SuperAdminSeeder extends Seeder
         );
 
         $superAdminRole = Role::where('name', 'Super Admin')->first();
+        $memberRole = Role::firstOrCreate(['name' => 'Member']);
 
+        $roleIds = collect([$memberRole->id]);
         if ($superAdminRole) {
-            $superAdmin->roles()->syncWithoutDetaching([$superAdminRole->id]);
+            $roleIds->push($superAdminRole->id);
         }
+        $superAdmin->roles()->sync($roleIds->unique()->values()->all());
     }
 }

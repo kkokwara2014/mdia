@@ -46,11 +46,26 @@ class User extends Authenticatable
                 $model->uuid = (string) Str::uuid();
             }
         });
+
+        static::created(function ($model) {
+            $memberRole = Role::firstOrCreate(['name' => 'Member']);
+            if (!$model->roles()->where('role_id', $memberRole->id)->exists()) {
+                $model->roles()->attach($memberRole->id);
+            }
+        });
     }
 
     public function getRouteKeyName()
     {
         return 'uuid';
+    }
+
+    public function getAvatarUrl(): string
+    {
+        if ($this->user_image) {
+            return asset('storage/' . $this->user_image);
+        }
+        return asset('assets/default-avatar.png');
     }
 
     public function roles(): BelongsToMany

@@ -4,6 +4,7 @@ use App\Http\Controllers\Web\Auth\AuthController;
 use App\Http\Controllers\Web\Dashboard\DashboardController;
 use App\Http\Controllers\Web\Member\MemberController;
 use App\Http\Controllers\Web\Payment\PaymentController;
+use App\Http\Controllers\Web\Profile\ProfileController;
 use App\Http\Controllers\Web\PaymentType\PaymentTypeController;
 use App\Http\Controllers\Web\Permission\PermissionController;
 use App\Http\Controllers\Web\Report\ReportController;
@@ -20,15 +21,29 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
+
     Route::get('/members/search', [MemberController::class, 'search'])->name('members.search');
 
     Route::middleware(['admin'])->group(function () {
         Route::get('/members', [MemberController::class, 'index'])->name('members.index');
         Route::get('/members/create', [MemberController::class, 'create'])->name('members.create');
         Route::post('/members', [MemberController::class, 'store'])->name('members.store');
+        Route::get('/members/download-pdf', [MemberController::class, 'downloadPdf'])->name('members.download-pdf');
         Route::get('/members/{user}', [MemberController::class, 'show'])->name('members.show');
         Route::get('/members/{user}/edit', [MemberController::class, 'edit'])->name('members.edit');
         Route::put('/members/{user}', [MemberController::class, 'update'])->name('members.update');
+    });
+
+    Route::delete('/members/{user}', [MemberController::class, 'destroy'])->name('members.destroy')
+        ->middleware(['auth', 'super_admin']);
+
+    Route::middleware(['member_only'])->group(function () {
+        Route::get('/my-payments', [PaymentController::class, 'myPayments'])->name('payments.my-payments');
+        Route::get('/payments/submit', [PaymentController::class, 'submitPayment'])->name('payments.submit');
+        Route::post('/payments/submit', [PaymentController::class, 'storeSubmitPayment'])->name('payments.submit.store');
     });
 
     Route::middleware(['can_validate_payment'])->group(function () {
@@ -40,14 +55,20 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/payments/{payment}/verify', [PaymentController::class, 'verify'])->name('payments.verify');
     });
 
-    Route::middleware(['super_admin'])->group(function () {
+    Route::post('/members/{user}/regenerate-password', [MemberController::class, 'regeneratePassword'])
+        ->name('members.regenerate-password')
+        ->middleware(['auth', 'super_admin']);
+
+    Route::middleware(['admin'])->group(function () {
         Route::get('/payment-types', [PaymentTypeController::class, 'index'])->name('payment-types.index');
         Route::get('/payment-types/create', [PaymentTypeController::class, 'create'])->name('payment-types.create');
         Route::post('/payment-types', [PaymentTypeController::class, 'store'])->name('payment-types.store');
         Route::get('/payment-types/{paymentType}/edit', [PaymentTypeController::class, 'edit'])->name('payment-types.edit');
         Route::put('/payment-types/{paymentType}', [PaymentTypeController::class, 'update'])->name('payment-types.update');
         Route::delete('/payment-types/{paymentType}', [PaymentTypeController::class, 'destroy'])->name('payment-types.destroy');
+    });
 
+    Route::middleware(['super_admin'])->group(function () {
         Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
         Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create');
         Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');

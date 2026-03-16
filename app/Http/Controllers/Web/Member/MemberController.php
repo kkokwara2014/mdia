@@ -7,9 +7,12 @@ use App\Http\Requests\StoreMemberRequest;
 use App\Http\Requests\UpdateMemberRequest;
 use App\Models\Role;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
@@ -59,31 +62,46 @@ class MemberController extends Controller
         return view('members.create', compact('roles'));
     }
 
-    public function store(StoreMemberRequest $request): RedirectResponse
+    public function store(StoreMemberRequest $request): View
     {
         $userImage = null;
         if ($request->hasFile('user_image')) {
             $userImage = $request->file('user_image')->store('members', 'public');
         }
 
+        $uppercase = chr(rand(65, 90));
+        $lowercase = substr(str_shuffle('abcdefghjkmnpqrstuvwxyz'), 0, 4);
+        $numbers = substr(str_shuffle('23456789'), 0, 2);
+        $special = ['@', '#', '$', '!'][rand(0, 3)];
+        $plainPassword = str_shuffle(
+            $uppercase . $lowercase . $numbers . $special
+        );
+
         $member = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
-            'password' => null,
+            'password' => Hash::make($plainPassword),
             'user_image' => $userImage,
         ]);
 
+        $memberRole = Role::firstOrCreate(['name' => 'Member']);
         if ($request->has('roles') && count($request->roles) > 0) {
             $roleIds = Role::whereIn('uuid', $request->roles)->pluck('id');
-            $member->roles()->sync($roleIds);
+            $member->roles()->sync($roleIds->merge([$memberRole->id])->unique()->values()->all());
         } else {
-            $memberRole = Role::firstOrCreate(['name' => 'Member']);
             $member->roles()->sync([$memberRole->id]);
         }
 
-        return redirect()->route('members.index')->with('success', 'Member created successfully.');
+        $member->load(['roles', 'payments' => fn ($q) => $q->with(['paymentType', 'verifiedBy'])->orderBy('payment_date', 'desc')]);
+
+        return view('members.show', [
+            'member' => $member,
+            'generatedPassword' => $plainPassword,
+            'successMessage' => 'Member created successfully.'
+        ]);
     }
+    
 
     public function show(User $user): View
     {
@@ -117,11 +135,72 @@ class MemberController extends Controller
             'user_image' => $userImage,
         ]);
 
-        if ($request->has('roles') && count($request->roles) > 0) {
-            $roleIds = Role::whereIn('uuid', $request->roles)->pluck('id');
-            $user->roles()->sync($roleIds);
+        if (auth()->user()->hasPermission('super_admin')) {
+            $memberRole = Role::firstOrCreate(['name' => 'Member']);
+            if ($request->has('roles') && count($request->roles) > 0) {
+                $roleIds = Role::whereIn('uuid', $request->roles)->pluck('id');
+                $user->roles()->sync($roleIds->merge([$memberRole->id])->unique()->values()->all());
+            } else {
+                $user->roles()->sync([$memberRole->id]);
+            }
         }
 
-        return redirect()->route('members.show', $user)->with('success', 'Member updated successfully.');
+        return redirect()->route('members.show', ['user' => $user->uuid])->with('success', 'Member updated successfully.');
+    }
+
+    public function destroy(User $user): RedirectResponse
+    {
+        if ($user->roles->contains('name', 'Super Admin')) {
+            return redirect()->back()->with('error', 'Cannot delete a Super Admin.');
+        }
+
+        // Clear verified_by on payments this user verified (to avoid FK constraint)
+        $user->verifiedPayments()->update(['verified_by' => null]);
+
+        if ($user->user_image && Storage::disk('public')->exists($user->user_image)) {
+            Storage::disk('public')->delete($user->user_image);
+        }
+
+        $user->delete();
+
+        return redirect()->route('members.index')->with('success', 'Member deleted successfully.');
+    }
+
+    public function regeneratePassword(User $user): View
+    {
+        $uppercase = chr(rand(65, 90));
+        $lowercase = substr(str_shuffle(
+            'abcdefghjkmnpqrstuvwxyz'), 0, 4);
+        $numbers = substr(str_shuffle('23456789'), 0, 2);
+        $special = ['@', '#', '$', '!'][rand(0, 3)];
+        $plainPassword = str_shuffle(
+            $uppercase . $lowercase . $numbers . $special
+        );
+
+        $user->update([
+            'password' => Hash::make($plainPassword),
+        ]);
+
+        $user->load(['roles', 'payments' => fn ($q) => $q->with(['paymentType', 'verifiedBy'])->orderBy('payment_date', 'desc')]);
+
+        return view('members.show', [
+            'member' => $user,
+            'generatedPassword' => $plainPassword,
+            'successMessage' => 'Password regenerated successfully.'
+        ]);
+    }
+
+    public function downloadPdf(): Response
+    {
+        $members = User::query()
+            ->orderBy('name')
+            ->get(['name']);
+
+        $pdf = Pdf::loadView('members.pdf', [
+            'members' => $members->pluck('name')->values()->all(),
+        ]);
+        $pdf->setPaper('a4', 'portrait');
+
+        return $pdf->download('mdia-members-' . now()->format('Y-m-d') . '.pdf');
     }
 }

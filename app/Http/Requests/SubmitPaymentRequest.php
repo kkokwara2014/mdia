@@ -19,7 +19,7 @@ class SubmitPaymentRequest extends FormRequest
             'payment_date' => ['required', 'date'],
             'notes' => ['nullable', 'string'],
             'evidence_files' => ['required', 'array', 'min:1'],
-            'evidence_files.*' => ['required', 'string'],
+            'evidence_files.*' => ['required', 'file', 'max:2048', 'mimes:jpeg,jpg,png,webp,pdf'],
         ];
     }
 }

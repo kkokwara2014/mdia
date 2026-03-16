@@ -42,7 +42,7 @@
                         @endforelse
                     </td>
                     <td>
-                        <div style="display: flex; gap: 6px;">
+                        <div style="display: flex; gap: var(--spacing-xs);">
                             <a href="{{ route('permissions.edit', $permission) }}" class="btn btn-sm btn-ghost-warning" title="Edit">
                                 <i class="ti ti-edit"></i>
                             </a>

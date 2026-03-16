@@ -58,7 +58,7 @@
         <input type="hidden" id="filterMemberUuid">
         <div id="filterMemberResults"
              class="list-group shadow-sm"
-             style="position: absolute; z-index: 9999; background: #ffffff; border: 1px solid #dee2e6; border-radius: 4px; max-height: 200px; overflow-y: auto; display: none; min-width: 250px;">
+             style="position: absolute; z-index: 9999; background: #ffffff; border: 1px solid #dee2e6; border-radius: 4px; max-height: clamp(200px, 40vh, 300px); overflow-y: auto; display: none; min-width: clamp(200px, 50vw, 350px);">
         </div>
     </div>
     <div class="col-auto">

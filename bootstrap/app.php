@@ -3,6 +3,7 @@
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\CheckAdminOrSuperAdmin;
 use App\Http\Middleware\CheckCanValidatePayment;
+use App\Http\Middleware\CheckIsMember;
 use App\Http\Middleware\CheckSuperAdmin;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -21,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'super_admin' => CheckSuperAdmin::class,
             'admin' => CheckAdminOrSuperAdmin::class,
             'can_validate_payment' => CheckCanValidatePayment::class,
+            'member_only' => CheckIsMember::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

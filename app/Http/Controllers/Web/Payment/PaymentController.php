@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\Payment;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePaymentRequest;
+use App\Http\Requests\SubmitPaymentRequest;
 use App\Models\Payment;
 use App\Models\PaymentEvidence;
 use App\Models\PaymentType;
@@ -137,5 +138,56 @@ class PaymentController extends Controller
         ]);
 
         return redirect()->route('payments.show', $payment)->with('success', 'Payment verified successfully.');
+    }
+
+    public function myPayments(Request $request): View
+    {
+        $query = Payment::query()
+            ->where('user_id', auth()->id())
+            ->with(['paymentType', 'verifiedBy', 'evidences']);
+
+        if ($request->filled('year')) {
+            $query->where('year', $request->input('year'));
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        $payments = $query->latest('payment_date')->paginate(15);
+
+        return view('payments.my-payments', compact('payments'));
+    }
+
+    public function submitPayment(): View
+    {
+        $paymentTypes = PaymentType::orderBy('name')->get();
+
+        return view('payments.submit', compact('paymentTypes'));
+    }
+
+    public function storeSubmitPayment(SubmitPaymentRequest $request): RedirectResponse
+    {
+        $paymentType = PaymentType::where('uuid', $request->payment_type_uuid)->firstOrFail();
+
+        $payment = Payment::create([
+            'user_id' => auth()->id(),
+            'payment_type_id' => $paymentType->id,
+            'amount' => $paymentType->amount,
+            'year' => $request->year,
+            'payment_date' => $request->payment_date,
+            'notes' => $request->notes,
+            'status' => 'pending',
+        ]);
+
+        foreach ($request->file('evidence_files', []) as $file) {
+            $path = $file->store('evidence', 'public');
+            PaymentEvidence::create([
+                'payment_id' => $payment->id,
+                'file_path' => $path,
+            ]);
+        }
+
+        return redirect()->route('payments.my-payments')->with('success', 'Payment submitted successfully. It will be reviewed shortly.');
     }
 }
