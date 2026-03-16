@@ -238,6 +238,13 @@ class DashboardController extends Controller
     )]
     public function adminStats(Request $request): JsonResponse
     {
+        if (!$request->user()?->hasPermission('validate_payment')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized. You do not have permission to view admin statistics.',
+            ], 403);
+        }
+
         $memberRole = Role::where('name', 'Member')->first();
         $totalMembers = $memberRole ? $memberRole->users()->count() : 0;
 

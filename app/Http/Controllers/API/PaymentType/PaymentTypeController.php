@@ -164,6 +164,18 @@ class PaymentTypeController extends Controller
     )]
     public function store(StorePaymentTypeRequest $request): JsonResponse
     {
+        if (!$request->user()?->hasPermission('super_admin')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized. Super Admin access required.',
+            ], 403);
+        }
+
+        return $this->doStore($request);
+    }
+
+    protected function doStore(StorePaymentTypeRequest $request): JsonResponse
+    {
         $paymentType = PaymentType::create([
             'name' => $request->name,
             'amount' => $request->amount,

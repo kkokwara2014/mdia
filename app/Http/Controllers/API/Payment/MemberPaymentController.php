@@ -123,6 +123,13 @@ class MemberPaymentController extends Controller
     )]
     public function submit(SubmitPaymentRequest $request): JsonResponse
     {
+        if ($request->user()->hasPermission('validate_payment') || $request->user()->hasPermission('admin') || $request->user()->hasPermission('super_admin')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This endpoint is for members only.',
+            ], 403);
+        }
+
         $paymentType = PaymentType::where('uuid', $request->payment_type_uuid)->firstOrFail();
 
         $payment = Payment::create([

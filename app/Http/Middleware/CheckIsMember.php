@@ -16,6 +16,12 @@ class CheckIsMember
         }
 
         if ($user->hasPermission('validate_payment') || $user->hasPermission('admin') || $user->hasPermission('super_admin')) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This endpoint is for members only.',
+                ], 403);
+            }
             return redirect()->route('dashboard')->with('error', 'This page is for members only.');
         }
 

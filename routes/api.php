@@ -29,11 +29,13 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::put('/profile', [MemberController::class, 'updateProfile']);
     Route::post('/profile/change-password', [MemberController::class, 'changePassword']);
     
-    Route::get('/payments/my', [PaymentController::class, 'myPayments']);
-    Route::post('/payments/submit', [MemberPaymentController::class, 'submit']);
-    
     Route::get('/dashboard/member', [DashboardController::class, 'memberStats']);
     Route::get('/reports/member', [ReportController::class, 'memberReport']);
+});
+
+Route::middleware(['auth:sanctum', 'member_only', 'throttle:60,1'])->group(function () {
+    Route::get('/payments/my', [PaymentController::class, 'myPayments']);
+    Route::post('/payments/submit', [MemberPaymentController::class, 'submit']);
 });
 
 Route::middleware(['auth:sanctum', 'admin', 'throttle:60,1'])->group(function () {

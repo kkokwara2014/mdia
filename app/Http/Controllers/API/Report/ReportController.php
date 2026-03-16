@@ -253,6 +253,13 @@ class ReportController extends Controller
     )]
     public function adminReport(Request $request): JsonResponse
     {
+        if (!$request->user()?->hasPermission('generate_reports')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized. You do not have permission to generate reports.',
+            ], 403);
+        }
+
         $payments = Payment::with(['user', 'paymentType', 'verifiedBy', 'evidences'])
             ->when($request->filled('year'), fn ($q) => $q->where('year', $request->input('year')))
             ->when($request->filled('from'), fn ($q) => $q->whereDate('payment_date', '>=', $request->input('from')))

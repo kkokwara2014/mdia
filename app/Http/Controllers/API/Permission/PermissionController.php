@@ -11,6 +11,19 @@ use OpenApi\Attributes as OA;
 
 class PermissionController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (!$request->user()?->hasPermission('super_admin')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized. Super Admin access required.',
+                ], 403);
+            }
+            return $next($request);
+        });
+    }
+
     #[OA\Get(
         path: '/permissions',
         summary: 'List all permissions',

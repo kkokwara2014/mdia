@@ -15,6 +15,19 @@ use OpenApi\Attributes as OA;
 
 class PaymentController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (!$request->user()?->hasPermission('validate_payment')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized. You do not have permission to validate payments.',
+                ], 403);
+            }
+            return $next($request);
+        })->only(['index', 'show', 'store', 'verify']);
+    }
+
     #[OA\Get(
         path: '/payments',
         summary: 'List all payments',
