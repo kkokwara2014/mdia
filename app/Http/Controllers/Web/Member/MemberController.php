@@ -53,7 +53,7 @@ class MemberController extends Controller
             });
         }
 
-        $members = $query->paginate(15)->withQueryString();
+        $members = $query->latest()->paginate(15)->withQueryString();
 
         return view('members.index', compact('members'));
     }

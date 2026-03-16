@@ -51,7 +51,16 @@
             </div>
             <div class="mb-3">
                 <label class="form-label required">Year</label>
-                <input type="number" name="year" class="form-control @error('year') is-invalid @enderror" value="{{ old('year', date('Y')) }}" min="1900" max="{{ date('Y') }}" required>
+                <select name="year" class="form-select @error('year') is-invalid @enderror" required>
+                    <option value="">Select year</option>
+                    @php
+                        $yr = $yearRange ?? ['min' => 1900, 'max' => (int) date('Y') + 1];
+                        for ($y = $yr['max']; $y >= $yr['min']; $y--) {
+                            $sel = old('year', date('Y')) == $y ? 'selected' : '';
+                            echo "<option value=\"{$y}\" {$sel}>{$y}</option>";
+                        }
+                    @endphp
+                </select>
                 @error('year')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -71,13 +80,13 @@
                 @enderror
             </div>
             <div class="mb-3">
-                <label class="form-label required">Payment Evidence</label>
+                <label class="form-label">Payment Evidence <span class="text-muted">(Optional)</span></label>
                 <input type="file"
                        class="form-control"
                        name="evidence_files[]"
                        multiple
                        accept="image/jpeg,image/png,image/jpg,image/webp,application/pdf">
-                <small class="text-muted">You can upload multiple files. Formats: JPG, PNG, WEBP, PDF. Max 2MB each.</small>
+                <small class="text-muted">Optionally attach receipts, screenshots, or proof of payment. Formats: JPG, PNG, WEBP, PDF. Max 2MB each.</small>
             </div>
             <button type="submit" class="btn btn-primary">Submit Payment</button>
         </form>

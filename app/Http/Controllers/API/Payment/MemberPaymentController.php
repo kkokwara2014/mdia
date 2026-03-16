@@ -21,7 +21,7 @@ class MemberPaymentController extends Controller
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
-                required: ['payment_type_uuid', 'year', 'payment_date', 'evidence_files'],
+                required: ['payment_type_uuid', 'year', 'payment_date'],
                 properties: [
                     new OA\Property(property: 'payment_type_uuid', type: 'string', format: 'uuid', example: '9d4e8b32-3c7a-4f9e-8b1a-2d3e4f5a6b7c'),
                     new OA\Property(property: 'year', type: 'integer', example: 2024),
@@ -30,8 +30,9 @@ class MemberPaymentController extends Controller
                     new OA\Property(
                         property: 'evidence_files',
                         type: 'array',
-                        items: new OA\Items(type: 'string', example: '/uploads/evidence/receipt_123.jpg'),
-                        minItems: 1
+                        description: 'Optional payment evidence (receipts, screenshots). JPG, PNG, WEBP, PDF. Max 2MB each.',
+                        items: new OA\Items(type: 'string', format: 'binary'),
+                        nullable: true
                     ),
                 ]
             )

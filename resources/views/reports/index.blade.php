@@ -68,11 +68,15 @@
 
 <div id="reportFilters" class="row g-2 mb-3 d-print-none">
     <div class="col-auto">
-        <input type="number"
-               id="filterYear"
-               class="form-control"
-               placeholder="Year"
-               min="1900">
+        <select id="filterYear" class="form-select">
+            <option value="">All years</option>
+            @php
+                $yr = $yearRange ?? ['min' => 1900, 'max' => (int) date('Y') + 1];
+                for ($y = $yr['max']; $y >= $yr['min']; $y--) {
+                    echo "<option value=\"{$y}\">{$y}</option>";
+                }
+            @endphp
+        </select>
     </div>
     <div class="col-auto">
         <input type="date" id="filterFrom" class="form-control" placeholder="From">
@@ -200,12 +204,13 @@
                     <th>Status</th>
                     <th>Payment Date</th>
                     <th>Verified By</th>
+                    <th>Verified At</th>
                     <th>Notes</th>
                 </tr>
             </thead>
             <tbody id="reportTableBody">
                 <tr>
-                    <td colspan="8" class="text-center text-muted py-4">No payments found</td>
+                    <td colspan="9" class="text-center text-muted py-4">No payments found</td>
                 </tr>
             </tbody>
         </table>
@@ -276,11 +281,12 @@ document.addEventListener('DOMContentLoaded', function () {
             var reportBody = document.getElementById('reportTableBody');
             var payments = data.data.payments;
             if (!payments || payments.length === 0) {
-                reportBody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">No payments found</td></tr>';
+                reportBody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-4">No payments found</td></tr>';
             } else {
                 reportBody.innerHTML = payments.map(function (p) {
                     var statusBadge = p.status === 'verified' ? '<span class="badge bg-success-lt">Verified</span>' : '<span class="badge bg-warning-lt">Pending</span>';
-                    return '<tr><td>' + escapeHtml(p.member_name) + '</td><td>' + escapeHtml(p.payment_type_name) + '</td><td>' + formatAmount(p.amount) + '</td><td>' + escapeHtml(String(p.year)) + '</td><td>' + statusBadge + '</td><td>' + escapeHtml(p.payment_date) + '</td><td>' + escapeHtml(p.verified_by_name) + '</td><td>' + escapeHtml(p.notes) + '</td></tr>';
+                    var verifiedAt = (p.verified_at || '-');
+                    return '<tr><td>' + escapeHtml(p.member_name) + '</td><td>' + escapeHtml(p.payment_type_name) + '</td><td>' + formatAmount(p.amount) + '</td><td>' + escapeHtml(String(p.year)) + '</td><td>' + statusBadge + '</td><td>' + escapeHtml(p.payment_date) + '</td><td>' + escapeHtml(p.verified_by_name || '-') + '</td><td>' + escapeHtml(verifiedAt) + '</td><td>' + escapeHtml(p.notes) + '</td></tr>';
                 }).join('');
             }
         })

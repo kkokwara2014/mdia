@@ -17,6 +17,8 @@ class Payment extends Model
         'payment_date',
         'notes',
         'status',
+        'verified_by',
+        'verified_at',
     ];
 
     protected $hidden = [

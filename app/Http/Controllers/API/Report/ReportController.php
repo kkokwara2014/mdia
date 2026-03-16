@@ -270,7 +270,8 @@ class ReportController extends Controller
                 $q->whereHas('user', fn ($q) => $q->where('uuid', $uuid));
             })
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->input('status')))
-            ->orderBy('payment_date')
+            ->orderBy('payment_date', 'desc')
+            ->orderBy('created_at', 'desc')
             ->get();
 
         $totalVerified = (float) round($payments->where('status', 'verified')->sum('amount'), 2);

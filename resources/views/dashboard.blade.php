@@ -132,6 +132,7 @@
                                 <th>Amount</th>
                                 <th>Year</th>
                                 <th>Status</th>
+                                <th>Verified By</th>
                                 <th>Payment Date</th>
                             </tr>
                         </thead>
@@ -148,11 +149,12 @@
                                     <span class="badge bg-yellow">Pending</span>
                                     @endif
                                 </td>
+                                <td>{{ ($payment->status ?? '') === 'verified' ? ($payment->verifiedBy?->name ?? '—') : '—' }}</td>
                                 <td>{{ $payment->payment_date?->format('M j, Y') ?? '—' }}</td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="text-center text-secondary py-4">No payments found</td>
+                                <td colspan="6" class="text-center text-secondary py-4">No payments found</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -214,6 +216,7 @@
                                 <th>Amount</th>
                                 <th>Year</th>
                                 <th>Status</th>
+                                <th>Verified By</th>
                                 <th>Payment Date</th>
                             </tr>
                         </thead>
@@ -231,11 +234,12 @@
                                     <span class="badge bg-yellow">Pending</span>
                                     @endif
                                 </td>
+                                <td>{{ ($payment->status ?? '') === 'verified' ? ($payment->verifiedBy?->name ?? '—') : '—' }}</td>
                                 <td>{{ $payment->payment_date?->format('M j, Y') ?? '—' }}</td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="text-center text-secondary py-4">No payments found</td>
+                                <td colspan="7" class="text-center text-secondary py-4">No payments found</td>
                             </tr>
                             @endforelse
                         </tbody>

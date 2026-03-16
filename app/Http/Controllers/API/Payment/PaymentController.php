@@ -15,19 +15,6 @@ use OpenApi\Attributes as OA;
 
 class PaymentController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(function ($request, $next) {
-            if (!$request->user()?->hasPermission('validate_payment')) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Unauthorized. You do not have permission to validate payments.',
-                ], 403);
-            }
-            return $next($request);
-        })->only(['index', 'show', 'store', 'verify']);
-    }
-
     #[OA\Get(
         path: '/payments',
         summary: 'List all payments',
@@ -168,7 +155,7 @@ class PaymentController extends Controller
             $query->where('status', $request->input('status'));
         }
 
-        $paginator = $query->latest('payment_date')->paginate(15)->withQueryString();
+        $paginator = $query->latest()->paginate(15)->withQueryString();
 
         $payments = $paginator->getCollection()->map(function ($payment) {
             return [
@@ -179,6 +166,8 @@ class PaymentController extends Controller
                 'year' => $payment->year,
                 'status' => $payment->status,
                 'payment_date' => $payment->payment_date->format('M d, Y'),
+                'verified_by_name' => $payment->verifiedBy?->name ?? null,
+                'verified_at' => $payment->verified_at?->format('M d, Y h:i A') ?? null,
             ];
         })->values()->all();
 
@@ -623,7 +612,7 @@ class PaymentController extends Controller
     )]
     public function myPayments(Request $request): JsonResponse
     {
-        $query = Payment::with(['paymentType', 'evidences'])
+        $query = Payment::with(['paymentType', 'verifiedBy', 'evidences'])
             ->where('user_id', $request->user()->id);
 
         if ($request->filled('year')) {
@@ -645,7 +634,7 @@ class PaymentController extends Controller
             }
         }
 
-        $paginator = $query->latest('payment_date')->paginate(15)->withQueryString();
+        $paginator = $query->latest()->paginate(15)->withQueryString();
 
         return response()->json([
             'success' => true,

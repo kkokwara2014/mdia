@@ -431,7 +431,7 @@
                             <ul class="navbar-nav" style="padding-left: 1.25rem;">
                                 @if($canValidatePayment)
                                 <li class="nav-item"><a class="nav-link" href="{{ route('payments.index') }}"><span class="nav-link-icon"><i class="ti ti-credit-card"></i></span><span class="nav-link-title">All Payments</span></a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{ route('payments.create') }}"><span class="nav-link-icon"><i class="ti ti-plus"></i></span><span class="nav-link-title">Log Payment</span></a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{ route('payments.create') }}"><span class="nav-link-icon"><i class="ti ti-plus"></i></span><span class="nav-link-title">Add Payment</span></a></li>
                                 @endif
                                 @if($isMember)
                                 <li class="nav-item"><a class="nav-link" href="{{ route('payments.my-payments') }}"><span class="nav-link-icon"><i class="ti ti-wallet"></i></span><span class="nav-link-title">My Payments</span></a></li>
@@ -471,6 +471,15 @@
                         </div>
                     </li>
                     @endif
+                    <li class="nav-item mt-3 pt-3 border-top">
+                        <form method="POST" action="{{ route('logout') }}" class="d-block">
+                            @csrf
+                            <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start d-flex align-items-center p-0">
+                                <span class="nav-link-icon"><i class="ti ti-logout"></i></span>
+                                <span class="nav-link-title">Logout</span>
+                            </button>
+                        </form>
+                    </li>
                 </ul>
             </div>
         </div>

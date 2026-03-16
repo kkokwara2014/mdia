@@ -44,7 +44,7 @@
                             <div class="text-secondary">{{ $member->country_of_residence ?? '—' }}</div>
                         </div>
                         <div class="member-info-meta">
-                            <div class="text-secondary mt-2 small">Member since {{ $member->created_at->format('M j, Y') }}</div>
+                            <div class="text-secondary mt-2 small">Member since {{ $member->registration_year ?? '—' }}</div>
                             <div class="mt-2">
                                 @foreach($member->roles as $role)
                                     <span class="badge bg-blue-lt">{{ $role->name }}</span>

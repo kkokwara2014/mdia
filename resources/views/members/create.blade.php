@@ -49,7 +49,7 @@
             </div>
             <div class="mb-3">
                 <label class="form-label required">Phone</label>
-                <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}" required>
+                <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}" maxlength="10" required>
                 @error('phone')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror

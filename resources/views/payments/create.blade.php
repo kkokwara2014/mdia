@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Log Payment')
+@section('title', 'Add Payment')
 
 @section('content')
 <div class="page-header d-print-none mb-3">
     <div class="row g-2 align-items-center">
         <div class="col">
-            <h2 class="page-title">Log Payment</h2>
+            <h2 class="page-title">Add Payment</h2>
         </div>
         <div class="col-auto ms-auto">
             <a href="{{ route('payments.index') }}" class="btn btn-outline-secondary">Back to Payments</a>
@@ -74,7 +74,16 @@
             </div>
             <div class="mb-3">
                 <label class="form-label required">Year</label>
-                <input type="number" name="year" class="form-control @error('year') is-invalid @enderror" value="{{ old('year', date('Y')) }}" min="1900" max="{{ date('Y') }}" required>
+                <select name="year" class="form-select @error('year') is-invalid @enderror" required>
+                    <option value="">Select year</option>
+                    @php
+                        $yr = $yearRange ?? ['min' => 1900, 'max' => (int) date('Y') + 1];
+                        for ($y = $yr['max']; $y >= $yr['min']; $y--) {
+                            $sel = old('year', date('Y')) == $y ? 'selected' : '';
+                            echo "<option value=\"{$y}\" {$sel}>{$y}</option>";
+                        }
+                    @endphp
+                </select>
                 @error('year')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -102,7 +111,7 @@
                        accept="image/jpeg,image/png,image/jpg,image/webp,application/pdf">
                 <small class="text-muted">You can upload multiple files. Formats: JPG, PNG, WEBP, PDF. Max 2MB each.</small>
             </div>
-            <button type="submit" class="btn btn-primary">Log Payment</button>
+            <button type="submit" class="btn btn-primary">Add Payment</button>
         </form>
     </div>
 </div>

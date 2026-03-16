@@ -9,18 +9,22 @@
             <h2 class="page-title">All Payments</h2>
         </div>
         <div class="col-auto ms-auto">
-            <a href="{{ route('payments.create') }}" class="btn btn-primary">Log Payment</a>
+            <a href="{{ route('payments.create') }}" class="btn btn-primary">Add Payment</a>
         </div>
     </div>
 </div>
 
 <div class="row g-2 mb-3">
     <div class="col-auto">
-        <input type="number"
-               id="filterYear"
-               class="form-control"
-               placeholder="Year e.g. 2024"
-               min="1900">
+        <select id="filterYear" class="form-select">
+            <option value="">All years</option>
+            @php
+                $yr = $yearRange ?? ['min' => 1900, 'max' => (int) date('Y') + 1];
+                for ($y = $yr['max']; $y >= $yr['min']; $y--) {
+                    echo "<option value=\"{$y}\">{$y}</option>";
+                }
+            @endphp
+        </select>
     </div>
     <div class="col-auto">
         <input type="date"
@@ -78,12 +82,13 @@
                     <th>Year</th>
                     <th>Status</th>
                     <th>Payment Date</th>
+                    <th>Verified By</th>
                     <th class="w-1">Actions</th>
                 </tr>
             </thead>
             <tbody id="paymentsTableBody">
                 <tr id="loadingRow" style="display: none;">
-                    <td colspan="8" class="text-center py-4">
+                    <td colspan="9" class="text-center py-4">
                         <div class="spinner-border text-primary" role="status"></div>
                     </td>
                 </tr>
@@ -138,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const payments = data.data.payments;
             if (payments.length === 0) {
                 const empty = document.createElement('tr');
-                empty.innerHTML = '<td colspan="8" class="text-center text-muted py-4">No payments found</td>';
+                empty.innerHTML = '<td colspan="9" class="text-center text-muted py-4">No payments found</td>';
                 tbody.appendChild(empty);
             } else {
                 const startIndex = (page - 1) * 15;
@@ -146,6 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const statusBadge = p.status === 'verified'
                         ? '<span class="badge bg-success-lt">Verified</span>'
                         : '<span class="badge bg-warning-lt">Pending</span>';
+                    const verifiedBy = p.verified_by_name || '-';
                     const row = document.createElement('tr');
                     row.innerHTML = '<td>' + (startIndex + i + 1) + '</td>' +
                         '<td>' + escapeHtml(p.member_name) + '</td>' +
@@ -154,6 +160,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         '<td>' + escapeHtml(String(p.year)) + '</td>' +
                         '<td>' + statusBadge + '</td>' +
                         '<td>' + escapeHtml(p.payment_date) + '</td>' +
+                        '<td>' + escapeHtml(verifiedBy) + '</td>' +
                         '<td><a href="{{ url("/payments") }}/' + escapeHtml(p.uuid) + '" class="btn btn-sm btn-ghost-primary" title="View">' +
                         '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">' +
                         '<path stroke="none" d="M0 0h24v24H0z" fill="none"/>' +
@@ -201,11 +208,6 @@ document.addEventListener('DOMContentLoaded', function () {
             clearTimeout(filterTimeout);
             filterTimeout = setTimeout(function () { loadPayments(1); }, 300);
         });
-    });
-
-    document.getElementById('filterYear').addEventListener('input', function () {
-        clearTimeout(filterTimeout);
-        filterTimeout = setTimeout(function () { loadPayments(1); }, 500);
     });
 
     document.getElementById('filterMember').addEventListener('input', function () {

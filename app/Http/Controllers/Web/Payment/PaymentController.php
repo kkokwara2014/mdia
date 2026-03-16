@@ -19,13 +19,14 @@ class PaymentController extends Controller
     public function index(): View
     {
         $paymentTypes = PaymentType::orderBy('name')->get();
+        $yearRange = User::getPaymentYearRange();
 
-        return view('payments.index', compact('paymentTypes'));
+        return view('payments.index', compact('paymentTypes', 'yearRange'));
     }
 
     public function filter(Request $request): JsonResponse
     {
-        $query = Payment::with(['user', 'paymentType']);
+        $query = Payment::with(['user', 'paymentType', 'verifiedBy']);
 
         if ($request->filled('year')) {
             $query->where('year', $request->input('year'));
@@ -53,7 +54,7 @@ class PaymentController extends Controller
             }
         }
 
-        $paginator = $query->latest('payment_date')->paginate(15);
+        $paginator = $query->latest()->paginate(15);
 
         $payments = $paginator->getCollection()->map(function ($payment) {
             return [
@@ -64,6 +65,8 @@ class PaymentController extends Controller
                 'year' => $payment->year,
                 'status' => $payment->status,
                 'payment_date' => $payment->payment_date->format('M d, Y'),
+                'verified_by_name' => $payment->verifiedBy?->name ?? null,
+                'verified_at' => $payment->verified_at?->format('M d, Y h:i A') ?? null,
             ];
         })->values()->all();
 
@@ -84,8 +87,9 @@ class PaymentController extends Controller
     public function create(): View
     {
         $paymentTypes = PaymentType::orderBy('name')->get();
+        $yearRange = User::getPaymentYearRange();
 
-        return view('payments.create', compact('paymentTypes'));
+        return view('payments.create', compact('paymentTypes', 'yearRange'));
     }
 
     public function store(StorePaymentRequest $request): RedirectResponse
@@ -155,16 +159,18 @@ class PaymentController extends Controller
             $query->where('status', $request->input('status'));
         }
 
-        $payments = $query->latest('payment_date')->paginate(15);
+        $payments = $query->latest()->paginate(15);
+        $yearRange = User::getPaymentYearRange();
 
-        return view('payments.my-payments', compact('payments'));
+        return view('payments.my-payments', compact('payments', 'yearRange'));
     }
 
     public function submitPayment(): View
     {
         $paymentTypes = PaymentType::orderBy('name')->get();
+        $yearRange = User::getPaymentYearRange();
 
-        return view('payments.submit', compact('paymentTypes'));
+        return view('payments.submit', compact('paymentTypes', 'yearRange'));
     }
 
     public function storeSubmitPayment(SubmitPaymentRequest $request): RedirectResponse

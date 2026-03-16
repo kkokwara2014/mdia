@@ -18,8 +18,9 @@ class ReportController extends Controller
     public function index(): View
     {
         $paymentTypes = PaymentType::orderBy('name')->get();
+        $yearRange = \App\Models\User::getPaymentYearRange();
 
-        return view('reports.index', compact('paymentTypes'));
+        return view('reports.index', compact('paymentTypes', 'yearRange'));
     }
 
     public function filter(Request $request): JsonResponse
@@ -133,7 +134,8 @@ class ReportController extends Controller
             ->when($paymentTypeUuid, fn ($q) => $q->whereHas('paymentType', fn ($q) => $q->where('uuid', $paymentTypeUuid)))
             ->when($memberUuid, fn ($q) => $q->whereHas('user', fn ($q) => $q->where('uuid', $memberUuid)))
             ->when($status, fn ($q) => $q->where('status', $status))
-            ->orderBy('payment_date')
+            ->orderBy('payment_date', 'desc')
+            ->orderBy('created_at', 'desc')
             ->get();
     }
 

@@ -16,12 +16,16 @@
 
 <form method="GET" action="{{ route('payments.my-payments') }}" class="row g-2 mb-3">
     <div class="col-auto">
-        <input type="number"
-               name="year"
-               class="form-control"
-               placeholder="Year e.g. {{ date('Y') }}"
-               min="1900"
-               value="{{ request('year') }}">
+        <select name="year" id="filterYear" class="form-select">
+            <option value="">All years</option>
+            @php
+                $yr = $yearRange ?? ['min' => 1900, 'max' => (int) date('Y') + 1];
+                for ($y = $yr['max']; $y >= $yr['min']; $y--) {
+                    $sel = request('year') == (string) $y ? 'selected' : '';
+                    echo "<option value=\"{$y}\" {$sel}>{$y}</option>";
+                }
+            @endphp
+        </select>
     </div>
     <div class="col-auto">
         <select name="status" class="form-select">
@@ -49,6 +53,7 @@
                     <th>Year</th>
                     <th>Status</th>
                     <th>Payment Date</th>
+                    <th>Verified By</th>
                 </tr>
             </thead>
             <tbody>
@@ -66,10 +71,17 @@
                             @endif
                         </td>
                         <td>{{ $payment->payment_date->format('M d, Y') }}</td>
+                        <td>
+                            @if($payment->status === 'verified')
+                                {{ $payment->verifiedBy?->name ?? '—' }}
+                            @else
+                                —
+                            @endif
+                        </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center text-muted py-4">No payments found</td>
+                        <td colspan="7" class="text-center text-muted py-4">No payments found</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -83,3 +95,4 @@
     </div>
 @endif
 @endsection
+

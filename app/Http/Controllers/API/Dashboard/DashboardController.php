@@ -293,8 +293,8 @@ class DashboardController extends Controller
                 DB::raw('COUNT(*) as payment_count')
             )
             ->join('users', 'payments.user_id', '=', 'users.id')
-            ->groupBy('users.id', 'users.uuid', 'users.name')
-            ->orderBy('users.name')
+            ->groupBy('users.id', 'users.uuid', 'users.name', 'users.created_at')
+            ->orderBy('users.created_at', 'desc')
             ->get();
 
         return response()->json([
