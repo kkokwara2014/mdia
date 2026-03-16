@@ -41,6 +41,7 @@
                             <h3 class="mb-1">{{ $member->name }}</h3>
                             <div class="text-secondary">{{ $member->email }}</div>
                             <div class="text-secondary">{{ $member->phone ?? '—' }}</div>
+                            <div class="text-secondary">{{ $member->country_of_residence ?? '—' }}</div>
                         </div>
                         <div class="member-info-meta">
                             <div class="text-secondary mt-2 small">Member since {{ $member->created_at->format('M j, Y') }}</div>

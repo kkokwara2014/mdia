@@ -56,6 +56,13 @@
                 @enderror
             </div>
             <div class="mb-3">
+                <label class="form-label required">Country</label>
+                <input type="text" name="country_of_residence" class="form-control @error('country_of_residence') is-invalid @enderror" value="{{ old('country_of_residence', $member->country_of_residence) }}" placeholder="e.g. United States of America" required>
+                @error('country_of_residence')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="mb-3">
                 <label class="form-label">User Image (optional)</label>
                 <div class="mb-2">
                     <img src="{{ $member->getAvatarUrl() }}" alt="{{ $member->name }}" style="width: var(--avatar-md); height: var(--avatar-md); object-fit: cover; border-radius: 50%;">

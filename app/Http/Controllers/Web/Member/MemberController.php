@@ -152,6 +152,7 @@ class MemberController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
+            'country_of_residence' => $request->country_of_residence,
             'user_image' => $userImage,
         ]);
 
@@ -220,11 +221,9 @@ class MemberController extends Controller
     {
         $members = User::query()
             ->orderBy('name')
-            ->get(['name']);
+            ->get(['name', 'email', 'phone', 'country_of_residence', 'registration_year']);
 
-        $pdf = Pdf::loadView('members.pdf', [
-            'members' => $members->pluck('name')->values()->all(),
-        ]);
+        $pdf = Pdf::loadView('members.pdf', ['members' => $members]);
         $pdf->setPaper('a4', 'portrait');
 
         return $pdf->download('mdia-members-' . now()->format('Y-m-d') . '.pdf');

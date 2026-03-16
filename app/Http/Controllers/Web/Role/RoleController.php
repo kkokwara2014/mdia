@@ -12,6 +12,16 @@ use Illuminate\View\View;
 
 class RoleController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (!auth()->user()?->hasPermission('super_admin')) {
+                return redirect()->route('dashboard')->with('error', 'Unauthorized. Super Admin access required.');
+            }
+            return $next($request);
+        });
+    }
+
     public function index(): View
     {
         $roles = Role::with('permissions')->withCount('users')->orderBy('name')->get();

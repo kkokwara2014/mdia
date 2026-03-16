@@ -14,6 +14,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('phone')->unique();
+            $table->string('country_of_residence')->default('United States of America');
+            $table->string('registration_year', 4)->nullable();
             $table->string('password')->nullable();
             $table->string('user_image')->nullable();
             $table->rememberToken();
