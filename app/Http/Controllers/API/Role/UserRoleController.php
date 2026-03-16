@@ -355,7 +355,12 @@ class UserRoleController extends Controller
     public function revoke(AssignRoleRequest $request, User $user): JsonResponse
     {
         $role = Role::findOrFail($request->role_id);
-
+        if ($role->name === 'Super Admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Super Admin role cannot be revoked.',
+            ], 403);
+        }
         if (!$user->roles()->where('role_id', $role->id)->exists()) {
             return response()->json([
                 'success' => false,

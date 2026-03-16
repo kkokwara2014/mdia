@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ClaimAccountRequest extends FormRequest
+class ChangePasswordRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,7 +14,7 @@ class ClaimAccountRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'identifier' => ['required', 'string'],
+            'current_password' => ['required', 'string'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ];
     }

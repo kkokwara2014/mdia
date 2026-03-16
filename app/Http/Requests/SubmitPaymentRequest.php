@@ -16,10 +16,10 @@ class SubmitPaymentRequest extends FormRequest
         return [
             'payment_type_uuid' => ['required', 'string', 'exists:payment_types,uuid'],
             'year' => ['required', 'integer', 'min:1900', 'max:' . date('Y')],
-            'payment_date' => ['required', 'date'],
-            'notes' => ['nullable', 'string'],
-            'evidence_files' => ['required', 'array', 'min:1'],
-            'evidence_files.*' => ['required', 'file', 'max:2048', 'mimes:jpeg,jpg,png,webp,pdf'],
+            'payment_date' => ['required', 'date', 'before_or_equal:today'],
+            'notes' => ['nullable', 'string', 'max:1000'],
+            'evidence_files' => ['nullable', 'array'],
+            'evidence_files.*' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp,pdf', 'mimetypes:image/jpeg,image/png,image/webp,application/pdf', 'max:2048'],
         ];
     }
 }

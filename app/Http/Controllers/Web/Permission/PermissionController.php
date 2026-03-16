@@ -50,6 +50,9 @@ class PermissionController extends Controller
 
     public function destroy(Permission $permission): RedirectResponse
     {
+        if ($permission->name === 'super_admin') {
+            return redirect()->back()->with('error', 'This permission cannot be deleted.');
+        }
         if ($permission->roles()->exists()) {
             return redirect()->back()->with('error', 'Cannot delete a permission that is assigned to roles.');
         }

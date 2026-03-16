@@ -15,10 +15,8 @@ class StoreRoleRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255', 'unique:roles,name'],
+            'permissions' => ['nullable', 'array'],
+            'permissions.*' => ['exists:permissions,uuid'],
         ];
-    }
-
-    protected function prepareForValidation(): void
-    {
     }
 }

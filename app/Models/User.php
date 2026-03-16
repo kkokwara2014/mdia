@@ -15,7 +15,6 @@ class User extends Authenticatable
     use HasFactory, Notifiable, HasApiTokens;
 
     protected $fillable = [
-        'uuid',
         'name',
         'email',
         'phone',
@@ -65,7 +64,7 @@ class User extends Authenticatable
         if ($this->user_image) {
             return asset('storage/' . $this->user_image);
         }
-        return asset('assets/default-avatar.png');
+        return asset('assets/user_avatar.png');
     }
 
     public function roles(): BelongsToMany

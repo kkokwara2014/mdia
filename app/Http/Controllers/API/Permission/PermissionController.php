@@ -362,6 +362,18 @@ class PermissionController extends Controller
     )]
     public function destroy(Permission $permission): JsonResponse
     {
+        if ($permission->name === 'super_admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'This permission cannot be deleted.',
+            ], 403);
+        }
+        if ($permission->roles()->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cannot delete a permission that is assigned to roles.',
+            ], 403);
+        }
         $permission->delete();
 
         return response()->json([

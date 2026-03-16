@@ -30,7 +30,9 @@ class ProfileController extends Controller
             if ($user->user_image && Storage::disk('public')->exists($user->user_image)) {
                 Storage::disk('public')->delete($user->user_image);
             }
-            $data['user_image'] = $request->file('user_image')->store('members', 'public');
+            $file = $request->file('user_image');
+            $filename = \Illuminate\Support\Str::random(40) . '.' . $file->getClientOriginalExtension();
+            $data['user_image'] = $file->storeAs('members', $filename, 'public');
         }
 
         $user->update($data);

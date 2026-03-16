@@ -25,9 +25,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
 
-    Route::get('/members/search', [MemberController::class, 'search'])->name('members.search');
-
     Route::middleware(['admin'])->group(function () {
+        Route::get('/members/search', [MemberController::class, 'search'])->name('members.search');
         Route::get('/members', [MemberController::class, 'index'])->name('members.index');
         Route::get('/members/create', [MemberController::class, 'create'])->name('members.create');
         Route::post('/members', [MemberController::class, 'store'])->name('members.store');
@@ -62,8 +61,11 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['admin'])->group(function () {
         Route::get('/payment-types', [PaymentTypeController::class, 'index'])->name('payment-types.index');
         Route::get('/payment-types/create', [PaymentTypeController::class, 'create'])->name('payment-types.create');
-        Route::post('/payment-types', [PaymentTypeController::class, 'store'])->name('payment-types.store');
         Route::get('/payment-types/{paymentType}/edit', [PaymentTypeController::class, 'edit'])->name('payment-types.edit');
+    });
+
+    Route::middleware(['super_admin'])->group(function () {
+        Route::post('/payment-types', [PaymentTypeController::class, 'store'])->name('payment-types.store');
         Route::put('/payment-types/{paymentType}', [PaymentTypeController::class, 'update'])->name('payment-types.update');
         Route::delete('/payment-types/{paymentType}', [PaymentTypeController::class, 'destroy'])->name('payment-types.destroy');
     });
@@ -84,7 +86,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/permissions/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
     });
 
-    Route::middleware(['can_validate_payment'])->group(function () {
+    Route::middleware(['generate_reports'])->group(function () {
         Route::get('/reports/download-pdf', [ReportController::class, 'downloadPdf'])->name('reports.download-pdf');
         Route::get('/reports/filter', [ReportController::class, 'filter'])->name('reports.filter');
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');

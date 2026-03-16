@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\API\Auth\AuthController;
 use App\Http\Controllers\API\Dashboard\DashboardController;
-use App\Http\Controllers\API\Member\ClaimAccountController;
 use App\Http\Controllers\API\Member\MemberController;
 use App\Http\Controllers\API\Payment\MemberPaymentController;
 use App\Http\Controllers\API\Payment\PaymentController;
@@ -15,9 +14,9 @@ use App\Http\Controllers\API\Role\UserRoleController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/claim', [ClaimAccountController::class, 'claim']);
+    Route::middleware('throttle:5,1')->group(function () {
+        Route::post('/login', [AuthController::class, 'login']);
+    });
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
@@ -25,9 +24,10 @@ Route::prefix('auth')->group(function () {
     });
 });
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/payment-types', [PaymentTypeController::class, 'index']);
-    Route::put('/members/profile', [MemberController::class, 'updateProfile']);
+    Route::put('/profile', [MemberController::class, 'updateProfile']);
+    Route::post('/profile/change-password', [MemberController::class, 'changePassword']);
     
     Route::get('/payments/my', [PaymentController::class, 'myPayments']);
     Route::post('/payments/submit', [MemberPaymentController::class, 'submit']);
@@ -36,24 +36,33 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/reports/member', [ReportController::class, 'memberReport']);
 });
 
-Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+Route::middleware(['auth:sanctum', 'admin', 'throttle:60,1'])->group(function () {
+    Route::get('/members/search', [MemberController::class, 'search']);
     Route::get('/members', [MemberController::class, 'index']);
     Route::get('/members/{user}', [MemberController::class, 'show']);
     Route::post('/members', [MemberController::class, 'store']);
     Route::put('/members/{user}', [MemberController::class, 'update']);
 });
 
-Route::middleware(['auth:sanctum', 'can_validate_payment'])->group(function () {
+Route::middleware(['auth:sanctum', 'super_admin', 'throttle:60,1'])->group(function () {
+    Route::delete('/members/{user}', [MemberController::class, 'destroy']);
+    Route::post('/members/{user}/regenerate-password', [MemberController::class, 'regeneratePassword']);
+});
+
+Route::middleware(['auth:sanctum', 'can_validate_payment', 'throttle:60,1'])->group(function () {
     Route::get('/payments', [PaymentController::class, 'index']);
     Route::get('/payments/{payment}', [PaymentController::class, 'show']);
     Route::post('/payments', [PaymentController::class, 'store']);
     Route::put('/payments/{payment}/verify', [PaymentController::class, 'verify']);
     
     Route::get('/dashboard/admin', [DashboardController::class, 'adminStats']);
+});
+
+Route::middleware(['auth:sanctum', 'generate_reports', 'throttle:60,1'])->group(function () {
     Route::get('/reports/admin', [ReportController::class, 'adminReport']);
 });
 
-Route::middleware(['auth:sanctum', 'super_admin'])->group(function () {
+Route::middleware(['auth:sanctum', 'super_admin', 'throttle:60,1'])->group(function () {
     Route::get('/roles', [RoleController::class, 'index']);
     Route::post('/roles', [RoleController::class, 'store']);
     Route::put('/roles/{role}', [RoleController::class, 'update']);

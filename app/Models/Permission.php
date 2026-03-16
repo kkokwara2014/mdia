@@ -9,7 +9,6 @@ use Illuminate\Support\Str;
 class Permission extends Model
 {
     protected $fillable = [
-        'uuid',
         'name',
         'description',
     ];

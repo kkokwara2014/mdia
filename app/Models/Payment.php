@@ -10,7 +10,6 @@ use Illuminate\Support\Str;
 class Payment extends Model
 {
     protected $fillable = [
-        'uuid',
         'user_id',
         'payment_type_id',
         'amount',
@@ -18,8 +17,6 @@ class Payment extends Model
         'payment_date',
         'notes',
         'status',
-        'verified_by',
-        'verified_at',
     ];
 
     protected $hidden = [

@@ -253,67 +253,58 @@ class ReportController extends Controller
     )]
     public function adminReport(Request $request): JsonResponse
     {
-        $query = Payment::with(['user', 'paymentType', 'verifiedBy', 'evidences']);
+        $payments = Payment::with(['user', 'paymentType', 'verifiedBy', 'evidences'])
+            ->when($request->filled('year'), fn ($q) => $q->where('year', $request->input('year')))
+            ->when($request->filled('from'), fn ($q) => $q->whereDate('payment_date', '>=', $request->input('from')))
+            ->when($request->filled('to'), fn ($q) => $q->whereDate('payment_date', '<=', $request->input('to')))
+            ->when($request->filled('payment_type_uuid'), fn ($q) => $q->whereHas('paymentType', fn ($q) => $q->where('uuid', $request->input('payment_type_uuid'))))
+            ->when($request->filled('member_uuid') || $request->filled('user_uuid'), function ($q) use ($request) {
+                $uuid = $request->input('member_uuid') ?? $request->input('user_uuid');
+                $q->whereHas('user', fn ($q) => $q->where('uuid', $uuid));
+            })
+            ->when($request->filled('status'), fn ($q) => $q->where('status', $request->input('status')))
+            ->orderBy('payment_date')
+            ->get();
 
-        if ($request->has('year')) {
-            $query->where('year', $request->input('year'));
-        }
+        $totalVerified = (float) round($payments->where('status', 'verified')->sum('amount'), 2);
+        $totalPending = (float) round($payments->where('status', 'pending')->sum('amount'), 2);
+        $totalCollections = $totalVerified + $totalPending;
+        $totalMembers = $payments->pluck('user_id')->unique()->filter()->count();
 
-        if ($request->has('from') && $request->has('to')) {
-            $query->whereBetween('payment_date', [$request->input('from'), $request->input('to')]);
-        }
-
-        if ($request->has('user_uuid')) {
-            $user = User::where('uuid', $request->input('user_uuid'))->first();
-            if ($user) {
-                $query->where('user_id', $user->id);
-            }
-        }
-
-        if ($request->has('payment_type_uuid')) {
-            $paymentType = PaymentType::where('uuid', $request->input('payment_type_uuid'))->first();
-            if ($paymentType) {
-                $query->where('payment_type_id', $paymentType->id);
-            }
-        }
-
-        if ($request->has('status')) {
-            $query->where('status', $request->input('status'));
-        }
-
-        $payments = $query->orderBy('payment_date', 'desc')->get();
-
-        $totalCollections = $payments->where('status', 'verified')->sum('amount');
-        $totalPending = $payments->where('status', 'pending')->sum('amount');
-        $totalVerified = $totalCollections;
-        $totalMembers = $payments->pluck('user_id')->unique()->count();
-
-        $paymentsData = $payments->map(function ($payment) {
+        $breakdown = $payments->groupBy('payment_type_id')->map(function ($group) {
+            $first = $group->first();
             return [
-                'uuid' => $payment->uuid,
-                'member_name' => $payment->user->name,
-                'payment_type' => $payment->paymentType->name,
-                'amount' => (float) $payment->amount,
-                'year' => $payment->year,
-                'payment_date' => $payment->payment_date->format('Y-m-d'),
-                'notes' => $payment->notes,
-                'status' => $payment->status,
-                'verified_by_name' => $payment->verifiedBy?->name,
-                'verified_at' => $payment->verified_at?->toIso8601String(),
-                'evidence_files' => $payment->evidences->pluck('file_path')->toArray(),
+                'name' => $first->paymentType?->name ?? '—',
+                'verified_total' => round((float) $group->where('status', 'verified')->sum('amount'), 2),
+                'pending_total' => round((float) $group->where('status', 'pending')->sum('amount'), 2),
+                'count' => $group->count(),
             ];
-        });
+        })->values()->all();
+
+        $paymentsData = $payments->map(fn ($payment) => [
+            'member_name' => $payment->user?->name ?? '-',
+            'payment_type_name' => $payment->paymentType?->name ?? '-',
+            'amount' => (float) $payment->amount,
+            'year' => $payment->year,
+            'payment_date' => $payment->payment_date?->format('M d, Y') ?? '-',
+            'status' => $payment->status,
+            'notes' => $payment->notes ?? '-',
+            'verified_by_name' => $payment->verifiedBy?->name ?? null,
+            'verified_at' => $payment->verified_at?->format('M d, Y h:i A') ?? null,
+        ])->values()->all();
 
         return response()->json([
             'success' => true,
             'message' => 'Admin report retrieved successfully',
             'data' => [
                 'summary' => [
-                    'total_collections' => (float) $totalCollections,
-                    'total_pending' => (float) $totalPending,
-                    'total_verified' => (float) $totalVerified,
+                    'total_verified' => $totalVerified,
+                    'total_pending' => $totalPending,
+                    'total_collections' => round($totalCollections, 2),
+                    'total_payments' => $payments->count(),
                     'total_members' => $totalMembers,
                 ],
+                'breakdown_by_payment_type' => $breakdown,
                 'payments' => $paymentsData,
             ],
         ], 200);

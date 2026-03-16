@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePaymentRequest;
 use App\Http\Requests\VerifyPaymentRequest;
 use App\Models\Payment;
+use App\Models\PaymentEvidence;
 use App\Models\PaymentType;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -135,8 +136,9 @@ class PaymentController extends Controller
             $query->whereBetween('payment_date', [$request->input('from'), $request->input('to')]);
         }
 
-        if ($request->has('user_uuid')) {
-            $user = User::where('uuid', $request->input('user_uuid'))->first();
+        $memberUuid = $request->input('member_uuid') ?? $request->input('user_uuid');
+        if ($memberUuid) {
+            $user = User::where('uuid', $memberUuid)->first();
             if ($user) {
                 $query->where('user_id', $user->id);
             }
@@ -149,17 +151,35 @@ class PaymentController extends Controller
             }
         }
 
-        if ($request->has('status')) {
+        if ($request->filled('status')) {
             $query->where('status', $request->input('status'));
         }
 
-        $payments = $query->get();
+        $paginator = $query->latest('payment_date')->paginate(15)->withQueryString();
+
+        $payments = $paginator->getCollection()->map(function ($payment) {
+            return [
+                'uuid' => $payment->uuid,
+                'member_name' => $payment->user?->name ?? '—',
+                'payment_type_name' => $payment->paymentType?->name ?? '—',
+                'amount' => number_format((float) $payment->amount, 2, '.', ''),
+                'year' => $payment->year,
+                'status' => $payment->status,
+                'payment_date' => $payment->payment_date->format('M d, Y'),
+            ];
+        })->values()->all();
 
         return response()->json([
             'success' => true,
             'message' => 'Payments retrieved successfully',
             'data' => [
                 'payments' => $payments,
+                'pagination' => [
+                    'current_page' => $paginator->currentPage(),
+                    'last_page' => $paginator->lastPage(),
+                    'total' => $paginator->total(),
+                    'per_page' => $paginator->perPage(),
+                ],
             ],
         ], 200);
     }
@@ -368,6 +388,17 @@ class PaymentController extends Controller
             'verified_by' => $request->user()->id,
             'verified_at' => now(),
         ]);
+
+        if ($request->hasFile('evidence_files')) {
+            foreach ($request->file('evidence_files') as $file) {
+                $filename = \Illuminate\Support\Str::random(40) . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs('evidence', $filename, 'public');
+                PaymentEvidence::create([
+                    'payment_id' => $payment->id,
+                    'file_path' => $path,
+                ]);
+            }
+        }
 
         return response()->json([
             'success' => true,
@@ -582,28 +613,38 @@ class PaymentController extends Controller
         $query = Payment::with(['paymentType', 'evidences'])
             ->where('user_id', $request->user()->id);
 
-        if ($request->has('year')) {
+        if ($request->filled('year')) {
             $query->where('year', $request->input('year'));
         }
 
-        if ($request->has('from') && $request->has('to')) {
+        if ($request->filled('from') && $request->filled('to')) {
             $query->whereBetween('payment_date', [$request->input('from'), $request->input('to')]);
         }
 
-        if ($request->has('payment_type_uuid')) {
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        if ($request->filled('payment_type_uuid')) {
             $paymentType = PaymentType::where('uuid', $request->input('payment_type_uuid'))->first();
             if ($paymentType) {
                 $query->where('payment_type_id', $paymentType->id);
             }
         }
 
-        $payments = $query->get();
+        $paginator = $query->latest('payment_date')->paginate(15)->withQueryString();
 
         return response()->json([
             'success' => true,
             'message' => 'Payments retrieved successfully',
             'data' => [
-                'payments' => $payments,
+                'payments' => $paginator->items(),
+                'pagination' => [
+                    'current_page' => $paginator->currentPage(),
+                    'last_page' => $paginator->lastPage(),
+                    'total' => $paginator->total(),
+                    'per_page' => $paginator->perPage(),
+                ],
             ],
         ], 200);
     }

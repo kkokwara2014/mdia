@@ -7,6 +7,7 @@ use App\Models\Payment;
 use App\Models\PaymentType;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
@@ -23,6 +24,9 @@ class ReportController extends Controller
 
     public function filter(Request $request): JsonResponse
     {
+        if (!auth()->user()->hasPermission('generate_reports')) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized.'], 403);
+        }
         $payments = $this->getFilteredPayments($request);
 
         $totalVerified = (float) $payments->where('status', 'verified')->sum('amount');
@@ -62,8 +66,11 @@ class ReportController extends Controller
         ]);
     }
 
-    public function downloadPdf(Request $request): Response
+    public function downloadPdf(Request $request): Response|RedirectResponse
     {
+        if (!auth()->user()->hasPermission('generate_reports')) {
+            return redirect()->route('dashboard')->with('error', 'You do not have permission to generate reports.');
+        }
         $payments = $this->getFilteredPayments($request);
 
         $totalVerified = (float) $payments->where('status', 'verified')->sum('amount');

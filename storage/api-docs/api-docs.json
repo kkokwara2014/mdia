@@ -12,159 +12,6 @@
         }
     ],
     "paths": {
-        "/auth/register": {
-            "post": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Register a new user",
-                "description": "Creates a new user account and returns an authentication token",
-                "operationId": "3a8b52fca2b4ff82bb3c3e2384ba864e",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name",
-                                    "email",
-                                    "password",
-                                    "password_confirmation"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "John Doe"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "john@example.com"
-                                    },
-                                    "phone": {
-                                        "type": "string",
-                                        "example": "1234567890",
-                                        "nullable": true
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "password123",
-                                        "minLength": 8
-                                    },
-                                    "password_confirmation": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "password123"
-                                    },
-                                    "user_image": {
-                                        "type": "string",
-                                        "example": "https://example.com/image.jpg",
-                                        "nullable": true
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "User registered successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "User registered successfully"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "user": {
-                                                    "properties": {
-                                                        "uuid": {
-                                                            "type": "string",
-                                                            "format": "uuid",
-                                                            "example": "9d4e8b32-3c7a-4f9e-8b1a-2d3e4f5a6b7c"
-                                                        },
-                                                        "name": {
-                                                            "type": "string",
-                                                            "example": "John Doe"
-                                                        },
-                                                        "email": {
-                                                            "type": "string",
-                                                            "example": "john@example.com"
-                                                        },
-                                                        "phone": {
-                                                            "type": "string",
-                                                            "example": "1234567890",
-                                                            "nullable": true
-                                                        },
-                                                        "user_image": {
-                                                            "type": "string",
-                                                            "example": "https://example.com/image.jpg",
-                                                            "nullable": true
-                                                        },
-                                                        "created_at": {
-                                                            "type": "string",
-                                                            "format": "date-time"
-                                                        },
-                                                        "updated_at": {
-                                                            "type": "string",
-                                                            "format": "date-time"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                },
-                                                "token": {
-                                                    "type": "string",
-                                                    "example": "1|abcdef123456..."
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "The email has already been taken."
-                                        },
-                                        "errors": {
-                                            "properties": {
-                                                "email": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "string",
-                                                        "example": "The email has already been taken."
-                                                    }
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/auth/login": {
             "post": {
                 "tags": [
@@ -796,196 +643,43 @@
                 ]
             }
         },
-        "/auth/claim": {
-            "post": {
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Claim account",
-                "description": "Allows a member to claim their account by providing email or phone and setting a password",
-                "operationId": "fa709c0c4225cabdd756515db88cb650",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "identifier",
-                                    "password",
-                                    "password_confirmation"
-                                ],
-                                "properties": {
-                                    "identifier": {
-                                        "description": "Email or phone number",
-                                        "type": "string",
-                                        "example": "john@example.com"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "password123",
-                                        "minLength": 8
-                                    },
-                                    "password_confirmation": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "password123"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Account claimed successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Account claimed successfully"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "user": {
-                                                    "properties": {
-                                                        "uuid": {
-                                                            "type": "string",
-                                                            "format": "uuid"
-                                                        },
-                                                        "name": {
-                                                            "type": "string"
-                                                        },
-                                                        "email": {
-                                                            "type": "string"
-                                                        },
-                                                        "phone": {
-                                                            "type": "string",
-                                                            "nullable": true
-                                                        },
-                                                        "user_image": {
-                                                            "type": "string",
-                                                            "nullable": true
-                                                        },
-                                                        "created_at": {
-                                                            "type": "string",
-                                                            "format": "date-time"
-                                                        },
-                                                        "updated_at": {
-                                                            "type": "string",
-                                                            "format": "date-time"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                },
-                                                "token": {
-                                                    "type": "string",
-                                                    "example": "3|abcdef123456..."
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Account already claimed",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Account has already been claimed."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Member not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "No member found with the provided email or phone."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "The password field confirmation does not match."
-                                        },
-                                        "errors": {
-                                            "properties": {
-                                                "password": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "string",
-                                                        "example": "The password field confirmation does not match."
-                                                    }
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/members": {
             "get": {
                 "tags": [
                     "Members"
                 ],
                 "summary": "List all members",
-                "description": "Retrieve a list of all members with optional search by name",
+                "description": "Retrieve a paginated list of members. Search by name, email, or phone.",
                 "operationId": "a8fe731dd68b858c0b27d9e1fd7711c6",
                 "parameters": [
                     {
                         "name": "search",
                         "in": "query",
-                        "description": "Search members by name",
+                        "description": "Search members by name, email, or phone",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "example": "John"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page (default 15)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 15
                         }
                     }
                 ],
@@ -1039,6 +733,23 @@
                                                         },
                                                         "type": "object"
                                                     }
+                                                },
+                                                "pagination": {
+                                                    "properties": {
+                                                        "current_page": {
+                                                            "type": "integer"
+                                                        },
+                                                        "last_page": {
+                                                            "type": "integer"
+                                                        },
+                                                        "total": {
+                                                            "type": "integer"
+                                                        },
+                                                        "per_page": {
+                                                            "type": "integer"
+                                                        }
+                                                    },
+                                                    "type": "object"
                                                 }
                                             },
                                             "type": "object"
@@ -1097,7 +808,7 @@
                     "Members"
                 ],
                 "summary": "Create a new member",
-                "description": "Create a new member without password (account must be claimed later)",
+                "description": "Create a new member with auto-generated password",
                 "operationId": "9fda82a88f742cb33c857ce22d747171",
                 "requestBody": {
                     "required": true,
@@ -1249,6 +960,110 @@
                                                 }
                                             },
                                             "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/members/search": {
+            "get": {
+                "tags": [
+                    "Members"
+                ],
+                "summary": "Search members for autocomplete",
+                "description": "Returns up to 10 members matching by name or email. Requires at least 2 characters in query.",
+                "operationId": "a2d392e86cb8643c48cb13076676640d",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Search query (min 2 characters; returns empty if omitted or shorter)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "john"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Search results",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "members": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "uuid": {
+                                                                "type": "string",
+                                                                "format": "uuid"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            },
+                                                            "email": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized. Admin access required."
                                         }
                                     },
                                     "type": "object"
@@ -1600,16 +1415,232 @@
                         "bearerAuth": []
                     }
                 ]
+            },
+            "delete": {
+                "tags": [
+                    "Members"
+                ],
+                "summary": "Delete a member",
+                "description": "Permanently delete a member. Super Admin only. Cannot delete Super Admin users.",
+                "operationId": "3e7b52bc21b694785156f1f00be93e02",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "Member UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "9d4e8b32-3c7a-4f9e-8b1a-2d3e4f5a6b7c"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Member deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Member deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Super Admin only or cannot delete Super Admin",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cannot delete a Super Admin."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Member not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No query results for model [App\\Models\\User]."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
-        "/members/profile": {
+        "/members/{uuid}/regenerate-password": {
+            "post": {
+                "tags": [
+                    "Members"
+                ],
+                "summary": "Regenerate member password",
+                "description": "Generate a new random password for a member. Super Admin only. Cannot regenerate for Super Admin users.",
+                "operationId": "5a4f1cf9a1caa93df86632c9c312034a",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "Member UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "9d4e8b32-3c7a-4f9e-8b1a-2d3e4f5a6b7c"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password regenerated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Password regenerated successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "member": {
+                                                    "description": "Updated member with roles and payments",
+                                                    "type": "object"
+                                                },
+                                                "generated_password": {
+                                                    "description": "The new plain-text password",
+                                                    "type": "string",
+                                                    "example": "Ab3x@"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Super Admin only or cannot regenerate for Super Admin",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cannot regenerate password for Super Admin from dashboard."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Member not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No query results for model [App\\Models\\User]."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/profile": {
             "put": {
                 "tags": [
                     "Members"
                 ],
                 "summary": "Update own profile",
                 "description": "Allows an authenticated member to update their own profile",
-                "operationId": "94e1548a7366394da60d20c5b5344d45",
+                "operationId": "ea12497745a3c8b1297b98c89b02b43e",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1734,6 +1765,112 @@
                                                 }
                                             },
                                             "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/profile/change-password": {
+            "post": {
+                "tags": [
+                    "Members"
+                ],
+                "summary": "Change own password",
+                "description": "Change the authenticated user password. Requires current password for verification.",
+                "operationId": "57f0a404ed2366a1d5c4b7bdcec58c06",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "current_password",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "current_password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "oldpassword123"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "newpassword123",
+                                        "minLength": 8
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "newpassword123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password changed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Password changed successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Current password incorrect or validation failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Current password is incorrect."
                                         }
                                     },
                                     "type": "object"
@@ -3396,6 +3533,1085 @@
                 ]
             }
         },
+        "/permissions": {
+            "get": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "List all permissions",
+                "description": "Retrieves a list of all available permissions in the system",
+                "operationId": "b375c698c4ae7e648b0dd5b571b55b2d",
+                "responses": {
+                    "200": {
+                        "description": "Permissions retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Permissions retrieved successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "permissions": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "uuid": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "9d4e8b32-3c7a-4f9e-8b1a-2d3e4f5a6b7c"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "validate_payment"
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "Allows user to validate member payments"
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "date-time"
+                                                            },
+                                                            "updated_at": {
+                                                                "type": "string",
+                                                                "format": "date-time"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Super Admin access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized. Super Admin access required."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Create a new permission",
+                "description": "Creates a new permission in the system",
+                "operationId": "faf0b1623f3b6a4e482c11821d93330f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Permission name in snake_case",
+                                        "type": "string",
+                                        "example": "manage_members"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Allows user to manage member accounts",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Permission created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Permission created successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "permission": {
+                                                    "properties": {
+                                                        "uuid": {
+                                                            "type": "string",
+                                                            "format": "uuid",
+                                                            "example": "9d4e8b32-3c7a-4f9e-8b1a-2d3e4f5a6b7c"
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "manage_members"
+                                                        },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "example": "Allows user to manage member accounts"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time"
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "string",
+                                                            "format": "date-time"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Super Admin access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized. Super Admin access required."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The name has already been taken."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The name has already been taken."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/permissions/{permission}": {
+            "put": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Update a permission",
+                "description": "Updates an existing permission",
+                "operationId": "4febedafdebf18b8dfdc55c6ee34bac8",
+                "parameters": [
+                    {
+                        "name": "permission",
+                        "in": "path",
+                        "description": "Permission UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "9d4e8b32-3c7a-4f9e-8b1a-2d3e4f5a6b7c"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Permission name in snake_case",
+                                        "type": "string",
+                                        "example": "validate_payment"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Allows user to validate member payments",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Permission updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Permission updated successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "permission": {
+                                                    "properties": {
+                                                        "uuid": {
+                                                            "type": "string",
+                                                            "format": "uuid",
+                                                            "example": "9d4e8b32-3c7a-4f9e-8b1a-2d3e4f5a6b7c"
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "validate_payment"
+                                                        },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "example": "Allows user to validate member payments"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time"
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "string",
+                                                            "format": "date-time"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Super Admin access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized. Super Admin access required."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Permission not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Permission not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The name has already been taken."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The name has already been taken."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Delete a permission",
+                "description": "Deletes a permission from the system",
+                "operationId": "8545bcbb07a50e97e40d231c07ed66ec",
+                "parameters": [
+                    {
+                        "name": "permission",
+                        "in": "path",
+                        "description": "Permission UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "9d4e8b32-3c7a-4f9e-8b1a-2d3e4f5a6b7c"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Permission deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Permission deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Super Admin access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized. Super Admin access required."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Permission not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Permission not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/roles/{role}/permissions": {
+            "get": {
+                "tags": [
+                    "Role Permissions"
+                ],
+                "summary": "List all permissions for a role",
+                "description": "Retrieves all permissions assigned to a specific role",
+                "operationId": "fc34cb3009342ffeb714bc9092200452",
+                "parameters": [
+                    {
+                        "name": "role",
+                        "in": "path",
+                        "description": "Role UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "9d4e8b32-3c7a-4f9e-8b1a-2d3e4f5a6b7c"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Role permissions retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Role permissions retrieved successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "role": {
+                                                    "properties": {
+                                                        "uuid": {
+                                                            "type": "string",
+                                                            "format": "uuid",
+                                                            "example": "9d4e8b32-3c7a-4f9e-8b1a-2d3e4f5a6b7c"
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Super Admin"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time"
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "string",
+                                                            "format": "date-time"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "permissions": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "uuid": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "8c5d9a21-2b6a-3e8f-7a0b-1c2d3e4f5a6b"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "validate_payment"
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "Allows user to validate member payments"
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "date-time"
+                                                            },
+                                                            "updated_at": {
+                                                                "type": "string",
+                                                                "format": "date-time"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Super Admin access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized. Super Admin access required."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Role not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Role not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/roles/{role}/permissions/assign": {
+            "post": {
+                "tags": [
+                    "Role Permissions"
+                ],
+                "summary": "Assign a permission to a role",
+                "description": "Assigns a specific permission to a role",
+                "operationId": "70d153515fe9b387ac2041c4c4fb5d34",
+                "parameters": [
+                    {
+                        "name": "role",
+                        "in": "path",
+                        "description": "Role UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "9d4e8b32-3c7a-4f9e-8b1a-2d3e4f5a6b7c"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "permission_uuid"
+                                ],
+                                "properties": {
+                                    "permission_uuid": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "example": "8c5d9a21-2b6a-3e8f-7a0b-1c2d3e4f5a6b"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Permission assigned successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Permission assigned to role successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "role": {
+                                                    "properties": {
+                                                        "uuid": {
+                                                            "type": "string",
+                                                            "format": "uuid",
+                                                            "example": "9d4e8b32-3c7a-4f9e-8b1a-2d3e4f5a6b7c"
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Super Admin"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time"
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "string",
+                                                            "format": "date-time"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "permission": {
+                                                    "properties": {
+                                                        "uuid": {
+                                                            "type": "string",
+                                                            "format": "uuid",
+                                                            "example": "8c5d9a21-2b6a-3e8f-7a0b-1c2d3e4f5a6b"
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "validate_payment"
+                                                        },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "example": "Allows user to validate member payments"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time"
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "string",
+                                                            "format": "date-time"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Super Admin access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized. Super Admin access required."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Role not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Role not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The selected permission uuid is invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "permission_uuid": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The selected permission uuid is invalid."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/roles/{role}/permissions/revoke": {
+            "delete": {
+                "tags": [
+                    "Role Permissions"
+                ],
+                "summary": "Revoke a permission from a role",
+                "description": "Removes a specific permission from a role",
+                "operationId": "e3102026301bd2aad874e77c09880f3f",
+                "parameters": [
+                    {
+                        "name": "role",
+                        "in": "path",
+                        "description": "Role UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "9d4e8b32-3c7a-4f9e-8b1a-2d3e4f5a6b7c"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "permission_uuid"
+                                ],
+                                "properties": {
+                                    "permission_uuid": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "example": "8c5d9a21-2b6a-3e8f-7a0b-1c2d3e4f5a6b"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Permission revoked successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Permission revoked from role successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Super Admin access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized. Super Admin access required."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Role or Permission not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Role not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The selected permission uuid is invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "permission_uuid": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The selected permission uuid is invalid."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/reports/member": {
             "get": {
                 "tags": [
@@ -3804,10 +5020,6 @@
                                                                 "type": "string",
                                                                 "example": "Admin"
                                                             },
-                                                            "can_validate_payment": {
-                                                                "type": "boolean",
-                                                                "example": false
-                                                            },
                                                             "created_at": {
                                                                 "type": "string",
                                                                 "format": "date-time"
@@ -3891,10 +5103,6 @@
                                     "name": {
                                         "type": "string",
                                         "example": "Editor"
-                                    },
-                                    "can_validate_payment": {
-                                        "type": "boolean",
-                                        "example": false
                                     }
                                 },
                                 "type": "object"
@@ -3929,10 +5137,6 @@
                                                         "name": {
                                                             "type": "string",
                                                             "example": "Editor"
-                                                        },
-                                                        "can_validate_payment": {
-                                                            "type": "boolean",
-                                                            "example": false
                                                         },
                                                         "created_at": {
                                                             "type": "string",
@@ -4059,10 +5263,6 @@
                                     "name": {
                                         "type": "string",
                                         "example": "Super Admin"
-                                    },
-                                    "can_validate_payment": {
-                                        "type": "boolean",
-                                        "example": true
                                     }
                                 },
                                 "type": "object"
@@ -4097,10 +5297,6 @@
                                                         "name": {
                                                             "type": "string",
                                                             "example": "Super Admin"
-                                                        },
-                                                        "can_validate_payment": {
-                                                            "type": "boolean",
-                                                            "example": true
                                                         },
                                                         "created_at": {
                                                             "type": "string",
@@ -4866,10 +6062,6 @@
             "description": "Dashboard"
         },
         {
-            "name": "Auth",
-            "description": "Auth"
-        },
-        {
             "name": "Members",
             "description": "Members"
         },
@@ -4884,6 +6076,14 @@
         {
             "name": "Payment Types",
             "description": "Payment Types"
+        },
+        {
+            "name": "Permissions",
+            "description": "Permissions"
+        },
+        {
+            "name": "Role Permissions",
+            "description": "Role Permissions"
         },
         {
             "name": "Reports",

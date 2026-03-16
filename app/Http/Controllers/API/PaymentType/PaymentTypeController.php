@@ -362,6 +362,13 @@ class PaymentTypeController extends Controller
     )]
     public function destroy(PaymentType $paymentType): JsonResponse
     {
+        if ($paymentType->payments()->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cannot delete payment type with existing payments.',
+            ], 422);
+        }
+
         $paymentType->delete();
 
         return response()->json([

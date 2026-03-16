@@ -9,7 +9,6 @@ use Illuminate\Support\Str;
 class Role extends Model
 {
     protected $fillable = [
-        'uuid',
         'name',
     ];
 

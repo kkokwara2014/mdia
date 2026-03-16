@@ -107,7 +107,8 @@ class PaymentController extends Controller
 
         if ($request->hasFile('evidence_files')) {
             foreach ($request->file('evidence_files') as $file) {
-                $path = $file->store('evidence', 'public');
+                $filename = \Illuminate\Support\Str::random(40) . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs('evidence', $filename, 'public');
                 PaymentEvidence::create([
                     'payment_id' => $payment->id,
                     'file_path' => $path,
@@ -181,7 +182,8 @@ class PaymentController extends Controller
         ]);
 
         foreach ($request->file('evidence_files', []) as $file) {
-            $path = $file->store('evidence', 'public');
+            $filename = \Illuminate\Support\Str::random(40) . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('evidence', $filename, 'public');
             PaymentEvidence::create([
                 'payment_id' => $payment->id,
                 'file_path' => $path,

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use App\Models\PaymentType;
-use App\Models\User;
+use App\Models\Role;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -238,7 +238,8 @@ class DashboardController extends Controller
     )]
     public function adminStats(Request $request): JsonResponse
     {
-        $totalMembers = User::count();
+        $memberRole = Role::where('name', 'Member')->first();
+        $totalMembers = $memberRole ? $memberRole->users()->count() : 0;
 
         $query = Payment::query();
 

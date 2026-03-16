@@ -133,14 +133,14 @@ class MemberPaymentController extends Controller
             'payment_date' => $request->payment_date,
             'notes' => $request->notes,
             'status' => 'pending',
-            'verified_by' => null,
-            'verified_at' => null,
         ]);
 
-        foreach ($request->evidence_files as $filePath) {
+        foreach ($request->file('evidence_files', []) as $file) {
+            $filename = \Illuminate\Support\Str::random(40) . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('evidence', $filename, 'public');
             PaymentEvidence::create([
                 'payment_id' => $payment->id,
-                'file_path' => $filePath,
+                'file_path' => $path,
             ]);
         }
 

@@ -3,6 +3,7 @@
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\CheckAdminOrSuperAdmin;
 use App\Http\Middleware\CheckCanValidatePayment;
+use App\Http\Middleware\CheckGenerateReports;
 use App\Http\Middleware\CheckIsMember;
 use App\Http\Middleware\CheckSuperAdmin;
 use Illuminate\Foundation\Application;
@@ -22,9 +23,22 @@ return Application::configure(basePath: dirname(__DIR__))
             'super_admin' => CheckSuperAdmin::class,
             'admin' => CheckAdminOrSuperAdmin::class,
             'can_validate_payment' => CheckCanValidatePayment::class,
+            'generate_reports' => CheckGenerateReports::class,
             'member_only' => CheckIsMember::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->shouldRenderJsonWhen(function ($request, $e) {
+            return $request->is('api/*') || $request->expectsJson();
+        });
+
+        $exceptions->render(function (\Illuminate\Validation\ValidationException $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed.',
+                    'errors' => $e->errors(),
+                ], 422);
+            }
+        });
     })->create();

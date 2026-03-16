@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
+use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
@@ -70,7 +71,7 @@ class RoleController extends Controller
     )]
     public function index(): JsonResponse
     {
-        $roles = Role::all();
+        $roles = Role::with('permissions')->withCount('users')->orderBy('name')->get();
 
         return response()->json([
             'success' => true,
@@ -166,9 +167,11 @@ class RoleController extends Controller
     )]
     public function store(StoreRoleRequest $request): JsonResponse
     {
-        $role = Role::create([
-            'name' => $request->name,
-        ]);
+        $role = Role::create(['name' => $request->name]);
+        if ($request->has('permissions')) {
+            $permissionIds = Permission::whereIn('uuid', $request->permissions)->pluck('id');
+            $role->permissions()->sync($permissionIds);
+        }
 
         return response()->json([
             'success' => true,
@@ -283,9 +286,9 @@ class RoleController extends Controller
     )]
     public function update(UpdateRoleRequest $request, Role $role): JsonResponse
     {
-        $role->update([
-            'name' => $request->name,
-        ]);
+        $role->update(['name' => $request->name]);
+        $permissionIds = Permission::whereIn('uuid', $request->permissions ?? [])->pluck('id');
+        $role->permissions()->sync($permissionIds);
 
         return response()->json([
             'success' => true,
@@ -355,6 +358,20 @@ class RoleController extends Controller
     )]
     public function destroy(Role $role): JsonResponse
     {
+        if ($role->name === 'Super Admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Super Admin role cannot be deleted.',
+            ], 403);
+        }
+        if ($role->users()->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cannot delete a role that has members assigned.',
+            ], 422);
+        }
+
+        $role->permissions()->detach();
         $role->delete();
 
         return response()->json([

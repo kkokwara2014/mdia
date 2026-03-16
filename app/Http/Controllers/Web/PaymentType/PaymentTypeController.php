@@ -25,6 +25,9 @@ class PaymentTypeController extends Controller
 
     public function store(StorePaymentTypeRequest $request): RedirectResponse
     {
+        if (!auth()->user()->hasPermission('super_admin')) {
+            return redirect()->route('dashboard')->with('error', 'Unauthorized.');
+        }
         PaymentType::create([
             'name' => $request->name,
             'amount' => $request->amount,
@@ -40,6 +43,9 @@ class PaymentTypeController extends Controller
 
     public function update(UpdatePaymentTypeRequest $request, PaymentType $paymentType): RedirectResponse
     {
+        if (!auth()->user()->hasPermission('super_admin')) {
+            return redirect()->route('dashboard')->with('error', 'Unauthorized.');
+        }
         $paymentType->update([
             'name' => $request->name,
             'amount' => $request->amount,
@@ -50,6 +56,9 @@ class PaymentTypeController extends Controller
 
     public function destroy(PaymentType $paymentType): RedirectResponse
     {
+        if (!auth()->user()->hasPermission('super_admin')) {
+            return redirect()->route('dashboard')->with('error', 'Unauthorized.');
+        }
         if ($paymentType->payments()->exists()) {
             return redirect()->back()->with('error', 'Cannot delete payment type with existing payments.');
         }

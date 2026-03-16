@@ -37,8 +37,11 @@ class MemberController extends Controller
         return response()->json($users);
     }
 
-    public function index(): View
+    public function index(): View|\Illuminate\Http\RedirectResponse
     {
+        if (!auth()->user()->hasPermission('admin') && !auth()->user()->hasPermission('super_admin')) {
+            return redirect()->route('dashboard')->with('error', 'Unauthorized.');
+        }
         $query = User::query()->with('roles');
 
         if (request()->filled('search')) {
@@ -57,16 +60,21 @@ class MemberController extends Controller
 
     public function create(): View
     {
-        $roles = Role::all();
+        $roles = Role::where('name', '!=', 'Member')->orderBy('name')->get();
 
         return view('members.create', compact('roles'));
     }
 
-    public function store(StoreMemberRequest $request): View
+    public function store(StoreMemberRequest $request): View|\Illuminate\Http\RedirectResponse
     {
+        if (!auth()->user()->hasPermission('admin') && !auth()->user()->hasPermission('super_admin')) {
+            return redirect()->route('dashboard')->with('error', 'Unauthorized.');
+        }
         $userImage = null;
         if ($request->hasFile('user_image')) {
-            $userImage = $request->file('user_image')->store('members', 'public');
+            $file = $request->file('user_image');
+            $filename = \Illuminate\Support\Str::random(40) . '.' . $file->getClientOriginalExtension();
+            $userImage = $file->storeAs('members', $filename, 'public');
         }
 
         $uppercase = chr(rand(65, 90));
@@ -103,8 +111,11 @@ class MemberController extends Controller
     }
     
 
-    public function show(User $user): View
+    public function show(User $user): View|\Illuminate\Http\RedirectResponse
     {
+        if (!auth()->user()->hasPermission('admin') && !auth()->user()->hasPermission('super_admin')) {
+            return redirect()->route('dashboard')->with('error', 'Unauthorized.');
+        }
         $user->load(['roles', 'payments' => fn ($q) => $q->with(['paymentType', 'verifiedBy'])->orderBy('payment_date', 'desc')]);
 
         return view('members.show', ['member' => $user]);
@@ -112,20 +123,29 @@ class MemberController extends Controller
 
     public function edit(User $user): View
     {
-        $roles = Role::all();
+        $roles = Role::where('name', '!=', 'Member')->orderBy('name')->get();
 
         return view('members.edit', ['member' => $user, 'roles' => $roles]);
     }
 
     public function update(UpdateMemberRequest $request, User $user): RedirectResponse
     {
+        if (!auth()->user()->hasPermission('admin') && !auth()->user()->hasPermission('super_admin')) {
+            return redirect()->route('dashboard')->with('error', 'Unauthorized.');
+        }
+        $targetIsSuperAdmin = $user->roles->contains('name', 'Super Admin');
+        if ($targetIsSuperAdmin && !auth()->user()->hasPermission('super_admin')) {
+            return redirect()->route('dashboard')->with('error', 'Only Super Admin can modify a Super Admin.');
+        }
         $userImage = $user->user_image;
 
         if ($request->hasFile('user_image')) {
             if ($user->user_image && Storage::disk('public')->exists($user->user_image)) {
                 Storage::disk('public')->delete($user->user_image);
             }
-            $userImage = $request->file('user_image')->store('members', 'public');
+            $file = $request->file('user_image');
+            $filename = \Illuminate\Support\Str::random(40) . '.' . $file->getClientOriginalExtension();
+            $userImage = $file->storeAs('members', $filename, 'public');
         }
 
         $user->update([
@@ -166,8 +186,14 @@ class MemberController extends Controller
         return redirect()->route('members.index')->with('success', 'Member deleted successfully.');
     }
 
-    public function regeneratePassword(User $user): View
+    public function regeneratePassword(User $user): View|\Illuminate\Http\RedirectResponse
     {
+        if (!auth()->user()->hasPermission('super_admin')) {
+            return redirect()->route('dashboard')->with('error', 'Unauthorized.');
+        }
+        if ($user->roles->contains('name', 'Super Admin')) {
+            return redirect()->back()->with('error', 'Cannot regenerate password for Super Admin from dashboard.');
+        }
         $uppercase = chr(rand(65, 90));
         $lowercase = substr(str_shuffle(
             'abcdefghjkmnpqrstuvwxyz'), 0, 4);
