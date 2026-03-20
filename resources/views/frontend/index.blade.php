@@ -29,7 +29,7 @@ Mbaise Diaspora - Home
                         <img src="{{asset('frontend/assets/images/video_img.jpg')}}" alt="">
                         <div class="funds-committed">
                             <small>Total Members</small>
-                            <span class="counter">240</span>
+                            <span class="counter">{{$membersCount}}</span>
                         </div>
                     </div>
                 </div>
