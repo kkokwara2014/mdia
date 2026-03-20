@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\Leader\StoreLeaderRequest;
 use App\Http\Requests\Web\Leader\UpdateLeaderRequest;
 use App\Models\Leader;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
@@ -27,7 +28,9 @@ class LeaderController extends Controller
 
     public function create(): View
     {
-        return view('leaders.create');
+        $roles = Role::query()->forLeaderPositionSelect()->get();
+
+        return view('leaders.create', compact('roles'));
     }
 
     public function store(StoreLeaderRequest $request): RedirectResponse
@@ -59,9 +62,11 @@ class LeaderController extends Controller
             $order = 0;
         }
 
+        $role = Role::where('uuid', $request->role_uuid)->firstOrFail();
+
         Leader::create([
             'user_id' => $user->id,
-            'position' => $request->position,
+            'role_id' => $role->id,
             'order' => (int) $order,
             'image' => $image,
             'social_links' => $request->input('social_links', []),
@@ -74,8 +79,9 @@ class LeaderController extends Controller
     public function edit(Leader $leader): View
     {
         $leader->load('user');
+        $roles = Role::query()->forLeaderPositionSelect()->get();
 
-        return view('leaders.edit', compact('leader'));
+        return view('leaders.edit', compact('leader', 'roles'));
     }
 
     public function update(UpdateLeaderRequest $request, Leader $leader): RedirectResponse
@@ -88,8 +94,10 @@ class LeaderController extends Controller
             $order = 0;
         }
 
+        $role = Role::where('uuid', $request->role_uuid)->firstOrFail();
+
         $payload = [
-            'position' => $request->position,
+            'role_id' => $role->id,
             'order' => (int) $order,
             'social_links' => $request->input('social_links', []),
         ];

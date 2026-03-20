@@ -35,15 +35,9 @@ class RolesAndPermissionsSeeder extends Seeder
             Permission::whereIn('name', ['admin', 'manage_members', 'validate_payment', 'generate_reports'])->pluck('id')
         );
 
-        $treasurerRole = Role::firstOrCreate(['name' => 'Treasurer']);
-        $treasurerRole->permissions()->sync(
-            Permission::whereIn('name', ['validate_payment', 'generate_reports'])->pluck('id')
-        );
-
-        $financialSecretaryRole = Role::firstOrCreate(['name' => 'Financial Secretary']);
-        $financialSecretaryRole->permissions()->sync(
-            Permission::whereIn('name', ['validate_payment', 'generate_reports'])->pluck('id')
-        );
+        foreach (['Chairman', 'Financial Secretary', 'Secretary', 'Treasurer'] as $name) {
+            Role::firstOrCreate(['name' => $name]);
+        }
 
         Role::firstOrCreate(['name' => 'Member']);
     }

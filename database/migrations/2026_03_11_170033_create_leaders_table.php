@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('position');
+            $table->foreignId('role_id')->constrained()->cascadeOnDelete();
             $table->string('image')->nullable();
             $table->json('social_links')->nullable();
             $table->boolean('is_published')->default(false);

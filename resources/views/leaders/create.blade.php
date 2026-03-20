@@ -74,9 +74,14 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Position <span class="text-danger">*</span></label>
-                <input type="text" name="position" class="form-control @error('position') is-invalid @enderror" value="{{ old('position') }}" placeholder="e.g. President, Secretary" required>
-                @error('position')
+                <label class="form-label">Position (role) <span class="text-danger">*</span></label>
+                <select name="role_uuid" class="form-select @error('role_uuid') is-invalid @enderror" required>
+                    <option value="" disabled @selected(old('role_uuid') === null || old('role_uuid') === '')>Select a role</option>
+                    @foreach($roles as $role)
+                        <option value="{{ $role->uuid }}" @selected(old('role_uuid') === $role->uuid)>{{ $role->name }}</option>
+                    @endforeach
+                </select>
+                @error('role_uuid')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>

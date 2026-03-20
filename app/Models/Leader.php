@@ -12,7 +12,7 @@ class Leader extends Model
     protected $fillable = [
         'user_id',
         'uuid',
-        'position',
+        'role_id',
         'image',
         'social_links',
         'is_published',
@@ -22,10 +22,17 @@ class Leader extends Model
     protected $hidden = [
         'id',
         'user_id',
+        'role_id',
+        'role',
     ];
 
     protected $appends = [
         'image_url',
+        'position',
+    ];
+
+    protected $with = [
+        'role',
     ];
 
     protected function casts(): array
@@ -54,6 +61,16 @@ class Leader extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    protected function position(): Attribute
+    {
+        return Attribute::get(fn () => $this->role?->name ?? '');
     }
 
     public function getImageUrl(): string
