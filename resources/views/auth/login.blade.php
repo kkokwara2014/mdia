@@ -4,10 +4,13 @@
 
 @section('content')
 <div class="container-tight py-4">
+    
     <div class="text-center mb-4">
-        <img src="{{ asset('assets/transparent_circulr_logo.png') }}" alt="" class="rounded" style="max-width: clamp(80px, 20vw, 120px); height: auto; object-fit: contain;">
-        <h2 class="mt-2">{{ config('app.name') }}</h2>
-    </div>
+        <a href="{{route('index')}}">
+            <img src="{{ asset('assets/transparent_circulr_logo.png') }}" alt="" class="rounded" style="max-width: clamp(80px, 20vw, 120px); height: auto; object-fit: contain;">
+        </a>
+            <h2 class="mt-2">{{ config('app.name') }}</h2>
+        </div>
     <div class="card card-md">
         <div class="card-body">
             <h2 class="card-title text-center mb-4">Sign in to your account</h2>

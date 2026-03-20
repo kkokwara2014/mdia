@@ -6,7 +6,7 @@
                         <h2><i data-feather="send"></i> Newsletter Subscribe</h2>
                         <div class="input-wrap">
                             <div class="mb-4">
-                                <input type="text" name="email" placeholder="Enter Your Email" class="form-control">
+                                <input type="text" name="email" placeholder="Enter Your Email" readonly class="form-control">
                             </div> 
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-outline-primary btn-block">Subscribe now</button>
@@ -51,10 +51,10 @@
                     <h3 class="footer-heading">Explore Us</h3>
                     <div class="footer-widget-menu">
                         <ul class="list-unstyled">
-                            <li><a href="about.html"><i class="icofont-simple-right"></i> <span>About Us</span></a></li>
-                            <li><a href="about.html#vison-mission"><i class="icofont-simple-right"></i> <span>Mission</span></a></li>
-                            <li><a href="about.html#vison-mission"><i class="icofont-simple-right"></i> <span>Vision</span></a></li>
-                            <li><a href="about.html#leaders"><i class="icofont-simple-right"></i> <span>Our Leaders</span></a></li>
+                            <li><a href="{{route('about')}}"><i class="icofont-simple-right"></i> <span>About Us</span></a></li>
+                            <li><a href="{{route('about')}}#vison-mission"><i class="icofont-simple-right"></i> <span>Mission</span></a></li>
+                            <li><a href="{{route('about')}}#vison-mission"><i class="icofont-simple-right"></i> <span>Vision</span></a></li>
+                            <li><a href="{{route('about')}}#leaders"><i class="icofont-simple-right"></i> <span>Our Leaders</span></a></li>
                         </ul>
                     </div>
                 </div>

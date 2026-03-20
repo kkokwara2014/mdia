@@ -19,7 +19,7 @@ Mbaise Diaspora - Home
                         </h3>
                         <p>Connecting sons and daughters of Mbaise living across North, Central, and South America to preserve our heritage, strengthen our community, and support the development of our homeland.</p>
                         <div class="hstack">                                        
-                            <a class="btn btn-primary me-3" href="about.html" role="button">Learn More</a>
+                            <a class="btn btn-primary me-3" href="{{route('about')}}" role="button">Learn More</a>
                             
                         </div>            
                     </div>
@@ -79,7 +79,7 @@ Mbaise Diaspora - Home
                         </div>    
                         
                         <div class="d-flex">
-                            <a class="btn btn-default mr-3" href="about.html">Learn More</a>
+                            <a class="btn btn-default mr-3" href="{{route('about')}}">Learn More</a>
                         </div>
 
 
