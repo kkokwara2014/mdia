@@ -105,8 +105,9 @@
                                     <li><a class="dropdown-item" href="{{route('about')}}#leaders">Our Leaders</a></li>                
                                 </ul>
                             </li>
-
-                            
+                            <li class="nav-item d-lg-none mt-2">
+                                <a class="btn btn-primary w-100 text-white text-center py-2 rounded" href="{{ route('login') }}">LOGIN</a>
+                            </li>
                         </ul>
                     </div>
                     <!-- Mobile Menu -->
