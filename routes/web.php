@@ -9,6 +9,7 @@ use App\Http\Controllers\Web\Profile\ProfileController;
 use App\Http\Controllers\Web\PaymentType\PaymentTypeController;
 use App\Http\Controllers\Web\Permission\PermissionController;
 use App\Http\Controllers\Web\Report\ReportController;
+use App\Http\Controllers\Web\Leader\LeaderController;
 use App\Http\Controllers\Web\Role\RoleController;
 use Illuminate\Support\Facades\Route;
 
@@ -87,6 +88,15 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/permissions/{permission}/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
         Route::put('/permissions/{permission}', [PermissionController::class, 'update'])->name('permissions.update');
         Route::delete('/permissions/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
+
+        Route::get('/leaders', [LeaderController::class, 'index'])->name('leaders.index');
+        Route::get('/leaders/create', [LeaderController::class, 'create'])->name('leaders.create');
+        Route::post('/leaders', [LeaderController::class, 'store'])->name('leaders.store');
+        Route::get('/leaders/{leader}/edit', [LeaderController::class, 'edit'])->name('leaders.edit');
+        Route::put('/leaders/{leader}', [LeaderController::class, 'update'])->name('leaders.update');
+        Route::delete('/leaders/{leader}', [LeaderController::class, 'destroy'])->name('leaders.destroy');
+        Route::post('/leaders/{leader}/publish', [LeaderController::class, 'publish'])->name('leaders.publish');
+        Route::post('/leaders/{leader}/unpublish', [LeaderController::class, 'unpublish'])->name('leaders.unpublish');
     });
 
     Route::middleware(['generate_reports'])->group(function () {

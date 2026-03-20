@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Leader;
 use Illuminate\Http\Request;
 
 class FrontendController extends Controller
@@ -11,6 +12,13 @@ class FrontendController extends Controller
     }
 
     public function about(){
-        return view('frontend.about.about');
+        $leaders = Leader::query()
+            ->with('user')
+            ->where('is_published', true)
+            ->orderBy('order')
+            ->orderBy('id')
+            ->get();
+
+        return view('frontend.about.about', compact('leaders'));
     }
 }

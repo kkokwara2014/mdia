@@ -69,6 +69,19 @@ class MemberController extends Controller
                                             new OA\Property(property: 'user_image', type: 'string', nullable: true),
                                             new OA\Property(property: 'created_at', type: 'string', format: 'date-time'),
                                             new OA\Property(property: 'updated_at', type: 'string', format: 'date-time'),
+                                            new OA\Property(
+                                                property: 'leader',
+                                                description: 'Organization leadership record when this member is a leader',
+                                                nullable: true,
+                                                properties: [
+                                                    new OA\Property(property: 'uuid', type: 'string', format: 'uuid'),
+                                                    new OA\Property(property: 'position', type: 'string'),
+                                                    new OA\Property(property: 'is_published', type: 'boolean'),
+                                                    new OA\Property(property: 'order', type: 'integer'),
+                                                    new OA\Property(property: 'image_url', type: 'string', format: 'uri'),
+                                                ],
+                                                type: 'object'
+                                            ),
                                         ],
                                         type: 'object'
                                     )
@@ -112,7 +125,7 @@ class MemberController extends Controller
     )]
     public function index(Request $request): JsonResponse
     {
-        $query = User::query()->with('roles');
+        $query = User::query()->with(['roles', 'leader']);
 
         if ($request->filled('search')) {
             $search = $request->input('search');
@@ -265,6 +278,33 @@ class MemberController extends Controller
                                         new OA\Property(property: 'user_image', type: 'string', nullable: true),
                                         new OA\Property(property: 'created_at', type: 'string', format: 'date-time'),
                                         new OA\Property(property: 'updated_at', type: 'string', format: 'date-time'),
+                                        new OA\Property(
+                                            property: 'roles',
+                                            type: 'array',
+                                            items: new OA\Items(type: 'object')
+                                        ),
+                                        new OA\Property(
+                                            property: 'payments',
+                                            type: 'array',
+                                            items: new OA\Items(type: 'object')
+                                        ),
+                                        new OA\Property(
+                                            property: 'leader',
+                                            description: 'Organization leadership record when this member is a leader',
+                                            nullable: true,
+                                            properties: [
+                                                new OA\Property(property: 'uuid', type: 'string', format: 'uuid'),
+                                                new OA\Property(property: 'position', type: 'string'),
+                                                new OA\Property(property: 'image', type: 'string', nullable: true),
+                                                new OA\Property(property: 'image_url', type: 'string', format: 'uri'),
+                                                new OA\Property(property: 'social_links', type: 'array', items: new OA\Items(type: 'object')),
+                                                new OA\Property(property: 'is_published', type: 'boolean'),
+                                                new OA\Property(property: 'order', type: 'integer'),
+                                                new OA\Property(property: 'created_at', type: 'string', format: 'date-time'),
+                                                new OA\Property(property: 'updated_at', type: 'string', format: 'date-time'),
+                                            ],
+                                            type: 'object'
+                                        ),
                                     ],
                                     type: 'object'
                                 ),
@@ -306,7 +346,11 @@ class MemberController extends Controller
     )]
     public function show(User $user): JsonResponse
     {
-        $user->load(['roles', 'payments' => fn ($q) => $q->with(['paymentType', 'verifiedBy'])->orderBy('payment_date', 'desc')]);
+        $user->load([
+            'roles',
+            'leader',
+            'payments' => fn ($q) => $q->with(['paymentType', 'verifiedBy'])->orderBy('payment_date', 'desc'),
+        ]);
 
         return response()->json([
             'success' => true,
@@ -356,6 +400,20 @@ class MemberController extends Controller
                                         new OA\Property(property: 'user_image', type: 'string', nullable: true),
                                         new OA\Property(property: 'created_at', type: 'string', format: 'date-time'),
                                         new OA\Property(property: 'updated_at', type: 'string', format: 'date-time'),
+                                        new OA\Property(property: 'roles', type: 'array', items: new OA\Items(type: 'object')),
+                                        new OA\Property(property: 'payments', type: 'array', items: new OA\Items(type: 'object')),
+                                        new OA\Property(
+                                            property: 'leader',
+                                            nullable: true,
+                                            properties: [
+                                                new OA\Property(property: 'uuid', type: 'string', format: 'uuid'),
+                                                new OA\Property(property: 'position', type: 'string'),
+                                                new OA\Property(property: 'image_url', type: 'string', format: 'uri'),
+                                                new OA\Property(property: 'is_published', type: 'boolean'),
+                                                new OA\Property(property: 'order', type: 'integer'),
+                                            ],
+                                            type: 'object'
+                                        ),
                                     ],
                                     type: 'object'
                                 ),
@@ -437,7 +495,11 @@ class MemberController extends Controller
             $member->roles()->sync([$memberRole->id]);
         }
 
-        $member->load(['roles', 'payments' => fn ($q) => $q->with(['paymentType', 'verifiedBy'])->orderBy('payment_date', 'desc')]);
+        $member->load([
+            'roles',
+            'leader',
+            'payments' => fn ($q) => $q->with(['paymentType', 'verifiedBy'])->orderBy('payment_date', 'desc'),
+        ]);
 
         return response()->json([
             'success' => true,
@@ -497,6 +559,20 @@ class MemberController extends Controller
                                         new OA\Property(property: 'user_image', type: 'string', nullable: true),
                                         new OA\Property(property: 'created_at', type: 'string', format: 'date-time'),
                                         new OA\Property(property: 'updated_at', type: 'string', format: 'date-time'),
+                                        new OA\Property(property: 'roles', type: 'array', items: new OA\Items(type: 'object')),
+                                        new OA\Property(
+                                            property: 'leader',
+                                            nullable: true,
+                                            properties: [
+                                                new OA\Property(property: 'uuid', type: 'string', format: 'uuid'),
+                                                new OA\Property(property: 'position', type: 'string'),
+                                                new OA\Property(property: 'image_url', type: 'string', format: 'uri'),
+                                                new OA\Property(property: 'social_links', type: 'array', items: new OA\Items(type: 'object')),
+                                                new OA\Property(property: 'is_published', type: 'boolean'),
+                                                new OA\Property(property: 'order', type: 'integer'),
+                                            ],
+                                            type: 'object'
+                                        ),
                                     ],
                                     type: 'object'
                                 ),
@@ -597,7 +673,7 @@ class MemberController extends Controller
             'success' => true,
             'message' => 'Member updated successfully',
             'data' => [
-                'member' => $user->fresh()->load('roles'),
+                'member' => $user->fresh()->load(['roles', 'leader']),
             ],
         ], 200);
     }
@@ -768,7 +844,11 @@ class MemberController extends Controller
             'success' => true,
             'message' => 'Password regenerated successfully',
             'data' => [
-                'member' => $user->fresh()->load(['roles', 'payments' => fn ($q) => $q->with(['paymentType', 'verifiedBy'])->orderBy('payment_date', 'desc')]),
+                'member' => $user->fresh()->load([
+                    'roles',
+                    'leader',
+                    'payments' => fn ($q) => $q->with(['paymentType', 'verifiedBy'])->orderBy('payment_date', 'desc'),
+                ]),
                 'generated_password' => $plainPassword,
             ],
         ], 200);
@@ -812,6 +892,18 @@ class MemberController extends Controller
                                         new OA\Property(property: 'user_image', type: 'string', nullable: true),
                                         new OA\Property(property: 'created_at', type: 'string', format: 'date-time'),
                                         new OA\Property(property: 'updated_at', type: 'string', format: 'date-time'),
+                                        new OA\Property(
+                                            property: 'leader',
+                                            nullable: true,
+                                            properties: [
+                                                new OA\Property(property: 'uuid', type: 'string', format: 'uuid'),
+                                                new OA\Property(property: 'position', type: 'string'),
+                                                new OA\Property(property: 'image_url', type: 'string', format: 'uri'),
+                                                new OA\Property(property: 'is_published', type: 'boolean'),
+                                                new OA\Property(property: 'order', type: 'integer'),
+                                            ],
+                                            type: 'object'
+                                        ),
                                     ],
                                     type: 'object'
                                 ),
@@ -876,7 +968,7 @@ class MemberController extends Controller
             'success' => true,
             'message' => 'Profile updated successfully.',
             'data' => [
-                'user' => $user->fresh(),
+                'user' => $user->fresh(['leader']),
             ],
         ], 200);
     }

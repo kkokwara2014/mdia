@@ -253,6 +253,7 @@ Mbaise Diaspora - About
         </section>
         <!-- Get to Know Us Style End -->
 
+        @if($leaders->isNotEmpty())
         <!-- Team Member Style Start -->
         <section class="wide-tb-100 team-bg mb-spacer-md">
             <div class="container">
@@ -266,86 +267,31 @@ Mbaise Diaspora - About
                 </div>
 
                 <div class="row">
-                    <!-- Team Column One -->
+                    @foreach($leaders as $leader)
+                    @php $leaderSocials = $leader->socialLinksForDisplay(); @endphp
                     <div class="col-12 col-lg-3 col-sm-6">
                         <div class="team-section-wrap mb-0">
                             <div class="img green">
+                                @if(count($leaderSocials) > 0)
                                 <div class="social-icons">
-                                    <a href="#"><i class="icofont-facebook"></i></a>
-                                    <a href="#"><i class="icofont-twitter"></i></a>
-                                    <a href="#"><i class="icofont-instagram"></i></a>
+                                    @foreach($leaderSocials as $link)
+                                    <a href="{{ $link['url'] }}" target="_blank" rel="noopener noreferrer" aria-label="{{ $link['platform'] }}"><i class="{{ $link['icon'] }}"></i></a>
+                                    @endforeach
                                 </div>
-                                <img src="{{asset('frontend/assets/images/team/team-1.jpg')}}" alt="" class="rounded-circle">
+                                @endif
+                                <img src="{{ $leader->getImageUrl() }}" alt="{{ $leader->getName() }}" class="rounded-circle">
                             </div>
-                            <h4>Okwara K. k.</h4>
-                            <h5>Chairman</h5>
-                            <div class="text-md-end">
-                               <!--  <a href="#" class="read-more-line"><span>Read More</span></a>-->
-                            </div>
+                            <h4>{{ $leader->getName() }}</h4>
+                            <h5>{{ $leader->position }}</h5>
+                            <div class="text-md-end"></div>
                         </div>
                     </div>
-                    <!-- Team Column One -->
-                    <!-- Team Column One -->
-                    <div class="col-12 col-lg-3 col-sm-6">
-                        <div class="team-section-wrap mb-0">
-                            <div class="img green">
-                                <div class="social-icons">
-                                    <a href="#"><i class="icofont-facebook"></i></a>
-                                    <a href="#"><i class="icofont-twitter"></i></a>
-                                    <a href="#"><i class="icofont-instagram"></i></a>
-                                </div>
-                                <img src="{{asset('frontend/assets/images/team/team-1.jpg')}}" alt="" class="rounded-circle">
-                            </div>
-                            <h4>Okwara K. k.</h4>
-                            <h5>Chairman</h5>
-                            <div class="text-md-end">
-                               <!--  <a href="#" class="read-more-line"><span>Read More</span></a>-->
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Team Column One -->
-                    <!-- Team Column One -->
-                    <div class="col-12 col-lg-3 col-sm-6">
-                        <div class="team-section-wrap mb-0">
-                            <div class="img green">
-                                <div class="social-icons">
-                                    <a href="#"><i class="icofont-facebook"></i></a>
-                                    <a href="#"><i class="icofont-twitter"></i></a>
-                                    <a href="#"><i class="icofont-instagram"></i></a>
-                                </div>
-                                <img src="assets/images/team/team-1.jpg" alt="" class="rounded-circle">
-                            </div>
-                            <h4>Okwara K. k.</h4>
-                            <h5>Chairman</h5>
-                            <div class="text-md-end">
-                               <!--  <a href="#" class="read-more-line"><span>Read More</span></a>-->
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Team Column One -->
-                    <!-- Team Column One -->
-                    <div class="col-12 col-lg-3 col-sm-6">
-                        <div class="team-section-wrap mb-0">
-                            <div class="img green">
-                                <div class="social-icons">
-                                    <a href="#"><i class="icofont-facebook"></i></a>
-                                    <a href="#"><i class="icofont-twitter"></i></a>
-                                    <a href="#"><i class="icofont-instagram"></i></a>
-                                </div>
-                                <img src="assets/images/team/team-1.jpg" alt="" class="rounded-circle">
-                            </div>
-                            <h4>Okwara K. k.</h4>
-                            <h5>Chairman</h5>
-                            <div class="text-md-end">
-                               <!--  <a href="#" class="read-more-line"><span>Read More</span></a>-->
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Team Column One -->
+                    @endforeach
                 </div>
             </div>
         </section>
         <!-- Team Member Style End -->
+        @endif
 
            
     </main>

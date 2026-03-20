@@ -13,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
@@ -20,7 +21,22 @@ class MemberController extends Controller
 {
     public function search(Request $request): JsonResponse
     {
-        $q = $request->input('q', '');
+        $q = trim((string) $request->input('q', ''));
+
+        if (Str::isUuid($q)) {
+            $user = User::query()->where('uuid', $q)->first(['uuid', 'name', 'email', 'user_image']);
+            if (!$user) {
+                return response()->json([]);
+            }
+
+            return response()->json([[
+                'uuid' => $user->uuid,
+                'name' => $user->name,
+                'email' => $user->email,
+                'image_url' => $user->getAvatarUrl(),
+            ]]);
+        }
+
         if (strlen($q) < 2) {
             return response()->json([]);
         }
@@ -116,7 +132,11 @@ class MemberController extends Controller
         if (!auth()->user()->hasPermission('admin') && !auth()->user()->hasPermission('super_admin')) {
             return redirect()->route('dashboard')->with('error', 'Unauthorized.');
         }
-        $user->load(['roles', 'payments' => fn ($q) => $q->with(['paymentType', 'verifiedBy'])->orderBy('payment_date', 'desc')]);
+        $user->load([
+            'roles',
+            'leader',
+            'payments' => fn ($q) => $q->with(['paymentType', 'verifiedBy'])->orderBy('payment_date', 'desc'),
+        ]);
 
         return view('members.show', ['member' => $user]);
     }

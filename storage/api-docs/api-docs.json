@@ -95,6 +95,30 @@
                                                         "updated_at": {
                                                             "type": "string",
                                                             "format": "date-time"
+                                                        },
+                                                        "leader": {
+                                                            "description": "Present when this user is an organization leader",
+                                                            "properties": {
+                                                                "uuid": {
+                                                                    "type": "string",
+                                                                    "format": "uuid"
+                                                                },
+                                                                "position": {
+                                                                    "type": "string"
+                                                                },
+                                                                "image_url": {
+                                                                    "type": "string",
+                                                                    "format": "uri"
+                                                                },
+                                                                "is_published": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "order": {
+                                                                    "type": "integer"
+                                                                }
+                                                            },
+                                                            "type": "object",
+                                                            "nullable": true
                                                         }
                                                     },
                                                     "type": "object"
@@ -269,6 +293,30 @@
                                                         "updated_at": {
                                                             "type": "string",
                                                             "format": "date-time"
+                                                        },
+                                                        "leader": {
+                                                            "description": "Present when this user is an organization leader",
+                                                            "properties": {
+                                                                "uuid": {
+                                                                    "type": "string",
+                                                                    "format": "uuid"
+                                                                },
+                                                                "position": {
+                                                                    "type": "string"
+                                                                },
+                                                                "image_url": {
+                                                                    "type": "string",
+                                                                    "format": "uri"
+                                                                },
+                                                                "is_published": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "order": {
+                                                                    "type": "integer"
+                                                                }
+                                                            },
+                                                            "type": "object",
+                                                            "nullable": true
                                                         }
                                                     },
                                                     "type": "object"
@@ -643,6 +691,89 @@
                 ]
             }
         },
+        "/leaders": {
+            "get": {
+                "tags": [
+                    "Leaders"
+                ],
+                "summary": "Get published leaders",
+                "description": "Returns organization leaders visible on the public about page. No authentication required.",
+                "operationId": "82adeb13c11f7d25b757fdc9810cd3ef",
+                "responses": {
+                    "200": {
+                        "description": "Published leaders retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "leaders": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "uuid": {
+                                                                "type": "string",
+                                                                "format": "uuid"
+                                                            },
+                                                            "member_uuid": {
+                                                                "description": "Linked member user UUID",
+                                                                "type": "string",
+                                                                "format": "uuid"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            },
+                                                            "position": {
+                                                                "type": "string"
+                                                            },
+                                                            "image_url": {
+                                                                "type": "string",
+                                                                "format": "uri"
+                                                            },
+                                                            "order": {
+                                                                "type": "integer"
+                                                            },
+                                                            "social_links": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "platform": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "url": {
+                                                                            "type": "string",
+                                                                            "format": "uri"
+                                                                        },
+                                                                        "icon": {
+                                                                            "description": "IcoFont class for the public site",
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": []
+            }
+        },
         "/members": {
             "get": {
                 "tags": [
@@ -729,6 +860,30 @@
                                                             "updated_at": {
                                                                 "type": "string",
                                                                 "format": "date-time"
+                                                            },
+                                                            "leader": {
+                                                                "description": "Organization leadership record when this member is a leader",
+                                                                "properties": {
+                                                                    "uuid": {
+                                                                        "type": "string",
+                                                                        "format": "uuid"
+                                                                    },
+                                                                    "position": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "is_published": {
+                                                                        "type": "boolean"
+                                                                    },
+                                                                    "order": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "image_url": {
+                                                                        "type": "string",
+                                                                        "format": "uri"
+                                                                    }
+                                                                },
+                                                                "type": "object",
+                                                                "nullable": true
                                                             }
                                                         },
                                                         "type": "object"
@@ -890,6 +1045,41 @@
                                                         "updated_at": {
                                                             "type": "string",
                                                             "format": "date-time"
+                                                        },
+                                                        "roles": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "payments": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "leader": {
+                                                            "properties": {
+                                                                "uuid": {
+                                                                    "type": "string",
+                                                                    "format": "uuid"
+                                                                },
+                                                                "position": {
+                                                                    "type": "string"
+                                                                },
+                                                                "image_url": {
+                                                                    "type": "string",
+                                                                    "format": "uri"
+                                                                },
+                                                                "is_published": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "order": {
+                                                                    "type": "integer"
+                                                                }
+                                                            },
+                                                            "type": "object",
+                                                            "nullable": true
                                                         }
                                                     },
                                                     "type": "object"
@@ -1144,6 +1334,60 @@
                                                         "updated_at": {
                                                             "type": "string",
                                                             "format": "date-time"
+                                                        },
+                                                        "roles": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "payments": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "leader": {
+                                                            "description": "Organization leadership record when this member is a leader",
+                                                            "properties": {
+                                                                "uuid": {
+                                                                    "type": "string",
+                                                                    "format": "uuid"
+                                                                },
+                                                                "position": {
+                                                                    "type": "string"
+                                                                },
+                                                                "image": {
+                                                                    "type": "string",
+                                                                    "nullable": true
+                                                                },
+                                                                "image_url": {
+                                                                    "type": "string",
+                                                                    "format": "uri"
+                                                                },
+                                                                "social_links": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "object"
+                                                                    }
+                                                                },
+                                                                "is_published": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "order": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "created_at": {
+                                                                    "type": "string",
+                                                                    "format": "date-time"
+                                                                },
+                                                                "updated_at": {
+                                                                    "type": "string",
+                                                                    "format": "date-time"
+                                                                }
+                                                            },
+                                                            "type": "object",
+                                                            "nullable": true
                                                         }
                                                     },
                                                     "type": "object"
@@ -1316,6 +1560,41 @@
                                                         "updated_at": {
                                                             "type": "string",
                                                             "format": "date-time"
+                                                        },
+                                                        "roles": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "leader": {
+                                                            "properties": {
+                                                                "uuid": {
+                                                                    "type": "string",
+                                                                    "format": "uuid"
+                                                                },
+                                                                "position": {
+                                                                    "type": "string"
+                                                                },
+                                                                "image_url": {
+                                                                    "type": "string",
+                                                                    "format": "uri"
+                                                                },
+                                                                "social_links": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "object"
+                                                                    }
+                                                                },
+                                                                "is_published": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "order": {
+                                                                    "type": "integer"
+                                                                }
+                                                            },
+                                                            "type": "object",
+                                                            "nullable": true
                                                         }
                                                     },
                                                     "type": "object"
@@ -1715,6 +1994,29 @@
                                                         "updated_at": {
                                                             "type": "string",
                                                             "format": "date-time"
+                                                        },
+                                                        "leader": {
+                                                            "properties": {
+                                                                "uuid": {
+                                                                    "type": "string",
+                                                                    "format": "uuid"
+                                                                },
+                                                                "position": {
+                                                                    "type": "string"
+                                                                },
+                                                                "image_url": {
+                                                                    "type": "string",
+                                                                    "format": "uri"
+                                                                },
+                                                                "is_published": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "order": {
+                                                                    "type": "integer"
+                                                                }
+                                                            },
+                                                            "type": "object",
+                                                            "nullable": true
                                                         }
                                                     },
                                                     "type": "object"
@@ -6060,6 +6362,10 @@
         {
             "name": "Dashboard",
             "description": "Dashboard"
+        },
+        {
+            "name": "Leaders",
+            "description": "Leaders"
         },
         {
             "name": "Members",

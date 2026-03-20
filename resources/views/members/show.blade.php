@@ -2,6 +2,16 @@
 
 @section('title', 'Member Profile')
 
+@section('css')
+<style>
+.member-leader-crown-wrap {
+    width: clamp(2.5rem, 11vw, 3rem);
+    height: clamp(2.5rem, 11vw, 3rem);
+    background: rgba(var(--tblr-primary-rgb), 0.12);
+}
+</style>
+@endsection
+
 @section('content')
 @if(isset($successMessage))
     <div class="alert alert-success alert-dismissible" role="alert">
@@ -44,6 +54,17 @@
                             <div class="text-secondary">{{ $member->country_of_residence ?? '—' }}</div>
                         </div>
                         <div class="member-info-meta">
+                            @if($member->leader)
+                            <div class="d-flex align-items-start gap-2 gap-md-3 justify-content-center justify-content-md-start text-md-start mb-3 mb-md-2 member-leader-badge w-100 mx-auto mx-md-0" style="max-width: min(100%, 20rem);">
+                                <span class="text-primary flex-shrink-0 d-inline-flex align-items-center justify-content-center rounded-2 member-leader-crown-wrap" aria-hidden="true">
+                                    <i class="ti ti-crown" style="font-size: clamp(1.25rem, 4vw, 1.75rem);"></i>
+                                </span>
+                                <div class="min-w-0 text-center text-md-start">
+                                    <div class="text-secondary text-uppercase fw-medium" style="font-size: var(--font-size-xs); letter-spacing: 0.04em;">Organization leader</div>
+                                    <div class="fw-semibold mt-1" style="font-size: var(--font-size-base); line-height: 1.35;">{{ $member->leader->position }}</div>
+                                </div>
+                            </div>
+                            @endif
                             <div class="text-secondary mt-2 small">Member since {{ $member->registration_year ?? '—' }}</div>
                             <div class="mt-2">
                                 @foreach($member->roles as $role)

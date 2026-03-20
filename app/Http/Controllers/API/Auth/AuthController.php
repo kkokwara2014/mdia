@@ -48,6 +48,19 @@ class AuthController extends Controller
                                         new OA\Property(property: 'user_image', type: 'string', nullable: true, example: 'https://example.com/image.jpg'),
                                         new OA\Property(property: 'created_at', type: 'string', format: 'date-time'),
                                         new OA\Property(property: 'updated_at', type: 'string', format: 'date-time'),
+                                        new OA\Property(
+                                            property: 'leader',
+                                            nullable: true,
+                                            description: 'Present when this user is an organization leader',
+                                            properties: [
+                                                new OA\Property(property: 'uuid', type: 'string', format: 'uuid'),
+                                                new OA\Property(property: 'position', type: 'string'),
+                                                new OA\Property(property: 'image_url', type: 'string', format: 'uri'),
+                                                new OA\Property(property: 'is_published', type: 'boolean'),
+                                                new OA\Property(property: 'order', type: 'integer'),
+                                            ],
+                                            type: 'object'
+                                        ),
                                     ],
                                     type: 'object'
                                 ),
@@ -100,6 +113,7 @@ class AuthController extends Controller
         }
 
         $user = User::where('email', $request->email)->firstOrFail();
+        $user->load('leader');
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
@@ -176,6 +190,19 @@ class AuthController extends Controller
                                         new OA\Property(property: 'user_image', type: 'string', nullable: true, example: 'https://example.com/image.jpg'),
                                         new OA\Property(property: 'created_at', type: 'string', format: 'date-time'),
                                         new OA\Property(property: 'updated_at', type: 'string', format: 'date-time'),
+                                        new OA\Property(
+                                            property: 'leader',
+                                            nullable: true,
+                                            description: 'Present when this user is an organization leader',
+                                            properties: [
+                                                new OA\Property(property: 'uuid', type: 'string', format: 'uuid'),
+                                                new OA\Property(property: 'position', type: 'string'),
+                                                new OA\Property(property: 'image_url', type: 'string', format: 'uri'),
+                                                new OA\Property(property: 'is_published', type: 'boolean'),
+                                                new OA\Property(property: 'order', type: 'integer'),
+                                            ],
+                                            type: 'object'
+                                        ),
                                     ],
                                     type: 'object'
                                 ),
@@ -198,11 +225,14 @@ class AuthController extends Controller
     )]
     public function me(Request $request): JsonResponse
     {
+        $user = $request->user();
+        $user->load('leader');
+
         return response()->json([
             'success' => true,
             'message' => 'User retrieved successfully',
             'data' => [
-                'user' => $request->user(),
+                'user' => $user,
             ],
         ], 200);
     }

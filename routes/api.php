@@ -10,8 +10,11 @@ use App\Http\Controllers\API\Permission\PermissionController;
 use App\Http\Controllers\API\Permission\RolePermissionController;
 use App\Http\Controllers\API\Report\ReportController;
 use App\Http\Controllers\API\Role\RoleController;
+use App\Http\Controllers\API\Leader\LeaderController as ApiLeaderController;
 use App\Http\Controllers\API\Role\UserRoleController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/leaders', [ApiLeaderController::class, 'index'])->name('api.leaders');
 
 Route::prefix('auth')->group(function () {
     Route::middleware('throttle:5,1')->group(function () {

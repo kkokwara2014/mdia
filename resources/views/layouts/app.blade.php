@@ -458,6 +458,12 @@
                     </li>
                     @endif
                     @if(auth()->user()->hasPermission('super_admin'))
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('leaders.index') }}">
+                            <span class="nav-link-icon"><i class="ti ti-crown"></i></span>
+                            <span class="nav-link-title">Leaders</span>
+                        </a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#navbar-admin" data-bs-toggle="collapse" data-bs-target="#navbar-admin" aria-expanded="false">
                             <span class="nav-link-icon"><i class="ti ti-settings"></i></span>
