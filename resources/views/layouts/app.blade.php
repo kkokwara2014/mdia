@@ -478,13 +478,10 @@
                     </li>
                     @endif
                     <li class="nav-item mt-3 pt-3 border-top">
-                        <form method="POST" action="{{ route('logout') }}" class="d-block">
-                            @csrf
-                            <button type="submit" onclick="return confirm('Do you want to logout?');" class="nav-link border-0 bg-transparent w-100 text-start d-flex align-items-center p-0">
-                                <span class="nav-link-icon"><i class="ti ti-logout"></i></span>
-                                <span class="nav-link-title">Logout</span>
-                            </button>
-                        </form>
+                        <button type="button" class="nav-link border-0 bg-transparent w-100 text-start d-flex align-items-center p-0" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                            <span class="nav-link-icon"><i class="ti ti-logout"></i></span>
+                            <span class="nav-link-title">Logout</span>
+                        </button>
                     </li>
                 </ul>
             </div>
@@ -515,10 +512,7 @@
                         <div class="dropdown-menu dropdown-menu-end">
                             <a class="dropdown-item" href="{{ route('profile.show') }}">My Profile</a>
                             <div class="dropdown-divider"></div>
-                            <form method="POST" action="{{ route('logout') }}" >
-                                @csrf
-                                <button type="submit" onclick="return confirm('Do you want to logout?');" class="dropdown-item">Logout</button>
-                            </form>
+                            <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</button>
                         </div>
                     </div>
                 </div>
@@ -547,6 +541,25 @@
         </div>
     </div>
 </div>
+
+<div class="modal modal-blur fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="modal-title" id="logoutModalLabel">Log out</div>
+                <div>Are you sure you want to log out?</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link link-secondary me-auto" data-bs-dismiss="modal">Cancel</button>
+                <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                    @csrf
+                    <button type="submit" class="btn btn-danger">Log out</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/js/tabler.min.js"></script>
 <script>
 (function () {
