@@ -5,7 +5,7 @@
 
 
 @section('title')
-Mbaise Diaspora - Home
+Home - Mbaise Diaspora in the Americas (MDIA)
 @endsection
 
     <!-- Banner Start -->

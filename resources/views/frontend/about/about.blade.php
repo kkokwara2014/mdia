@@ -113,7 +113,7 @@
 
 
 @section('title')
-Mbaise Diaspora - About
+About - Mbaise Diaspora in the Americas (MDIA)
 @endsection
 
     <!-- Page Breadcrumbs Start -->
