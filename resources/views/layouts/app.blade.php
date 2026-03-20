@@ -474,7 +474,7 @@
                     <li class="nav-item mt-3 pt-3 border-top">
                         <form method="POST" action="{{ route('logout') }}" class="d-block">
                             @csrf
-                            <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start d-flex align-items-center p-0">
+                            <button type="submit" onclick="return confirm('Do you want to logout?');" class="nav-link border-0 bg-transparent w-100 text-start d-flex align-items-center p-0">
                                 <span class="nav-link-icon"><i class="ti ti-logout"></i></span>
                                 <span class="nav-link-title">Logout</span>
                             </button>
@@ -509,9 +509,9 @@
                         <div class="dropdown-menu dropdown-menu-end">
                             <a class="dropdown-item" href="{{ route('profile.show') }}">My Profile</a>
                             <div class="dropdown-divider"></div>
-                            <form method="POST" action="{{ route('logout') }}">
+                            <form method="POST" action="{{ route('logout') }}" >
                                 @csrf
-                                <button type="submit" class="dropdown-item">Logout</button>
+                                <button type="submit" onclick="return confirm('Do you want to logout?');" class="dropdown-item">Logout</button>
                             </form>
                         </div>
                     </div>
