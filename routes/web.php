@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\Web\Auth\AuthController;
 use App\Http\Controllers\Web\Dashboard\DashboardController;
 use App\Http\Controllers\Web\Member\MemberController;
@@ -11,7 +12,9 @@ use App\Http\Controllers\Web\Report\ReportController;
 use App\Http\Controllers\Web\Role\RoleController;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/login');
+Route::get('/', [FrontendController::class, 'index'])->name('index');
+Route::get('/about', [FrontendController::class, 'about'])->name('about');
+// Route::redirect('/', '/login');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
