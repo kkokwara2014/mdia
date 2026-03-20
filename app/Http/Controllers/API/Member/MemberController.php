@@ -123,7 +123,7 @@ class MemberController extends Controller
             });
         }
 
-        $paginator = $query->paginate(15)->withQueryString();
+        $paginator = $query->latest()->paginate(15)->withQueryString();
 
         return response()->json([
             'success' => true,
@@ -330,7 +330,7 @@ class MemberController extends Controller
                 properties: [
                     new OA\Property(property: 'name', type: 'string', maxLength: 255, example: 'Jane Doe'),
                     new OA\Property(property: 'email', type: 'string', format: 'email', example: 'jane@example.com'),
-                    new OA\Property(property: 'phone', type: 'string', maxLength: 20, example: '1234567890'),
+                    new OA\Property(property: 'phone', type: 'string', maxLength: 10, example: '1234567890'),
                     new OA\Property(property: 'user_image', type: 'string', nullable: true, example: 'https://example.com/image.jpg'),
                 ]
             )
@@ -471,7 +471,7 @@ class MemberController extends Controller
                 properties: [
                     new OA\Property(property: 'name', type: 'string', maxLength: 255, example: 'Jane Doe Updated'),
                     new OA\Property(property: 'email', type: 'string', format: 'email', example: 'jane.updated@example.com'),
-                    new OA\Property(property: 'phone', type: 'string', maxLength: 20, example: '0987654321'),
+                    new OA\Property(property: 'phone', type: 'string', maxLength: 10, example: '0987654321'),
                     new OA\Property(property: 'user_image', type: 'string', nullable: true, example: 'https://example.com/new-image.jpg'),
                 ]
             )
@@ -786,7 +786,7 @@ class MemberController extends Controller
                 required: ['name', 'phone'],
                 properties: [
                     new OA\Property(property: 'name', type: 'string', maxLength: 255, example: 'John Doe Updated'),
-                    new OA\Property(property: 'phone', type: 'string', maxLength: 20, example: '1234567890'),
+                    new OA\Property(property: 'phone', type: 'string', maxLength: 10, example: '1234567890'),
                     new OA\Property(property: 'user_image', type: 'string', nullable: true, example: 'https://example.com/image.jpg'),
                 ]
             )

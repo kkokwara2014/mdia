@@ -35,8 +35,8 @@ class DashboardController extends Controller
             ->get();
 
         $data['member_recent_payments'] = Payment::where('user_id', $user->id)
-            ->with('paymentType')
-            ->orderBy('payment_date', 'desc')
+            ->with(['paymentType', 'verifiedBy'])
+            ->latest()
             ->limit(5)
             ->get();
 
@@ -59,8 +59,8 @@ class DashboardController extends Controller
                 ->groupBy('payment_types.id', 'payment_types.name')
                 ->get();
 
-            $data['recent_payments'] = Payment::with(['user', 'paymentType'])
-                ->orderBy('payment_date', 'desc')
+            $data['recent_payments'] = Payment::with(['user', 'paymentType', 'verifiedBy'])
+                ->latest()
                 ->limit(10)
                 ->get();
         }

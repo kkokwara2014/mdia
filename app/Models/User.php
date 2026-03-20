@@ -92,4 +92,14 @@ class User extends Authenticatable
             })
             ->exists();
     }
+
+    public static function getPaymentYearRange(): array
+    {
+        $minYear = (int) (static::whereNotNull('registration_year')
+            ->where('registration_year', '!=', '')
+            ->min('registration_year') ?: 1900);
+        $maxYear = (int) date('Y') + 1;
+
+        return ['min' => $minYear, 'max' => $maxYear];
+    }
 }

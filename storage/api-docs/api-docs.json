@@ -834,7 +834,7 @@
                                     "phone": {
                                         "type": "string",
                                         "example": "1234567890",
-                                        "maxLength": 20
+                                        "maxLength": 10
                                     },
                                     "user_image": {
                                         "type": "string",
@@ -1260,7 +1260,7 @@
                                     "phone": {
                                         "type": "string",
                                         "example": "0987654321",
-                                        "maxLength": 20
+                                        "maxLength": 10
                                     },
                                     "user_image": {
                                         "type": "string",
@@ -1659,7 +1659,7 @@
                                     "phone": {
                                         "type": "string",
                                         "example": "1234567890",
-                                        "maxLength": 20
+                                        "maxLength": 10
                                     },
                                     "user_image": {
                                         "type": "string",
@@ -1902,8 +1902,7 @@
                                 "required": [
                                     "payment_type_uuid",
                                     "year",
-                                    "payment_date",
-                                    "evidence_files"
+                                    "payment_date"
                                 ],
                                 "properties": {
                                     "payment_type_uuid": {
@@ -1926,12 +1925,13 @@
                                         "nullable": true
                                     },
                                     "evidence_files": {
+                                        "description": "Optional payment evidence (receipts, screenshots). JPG, PNG, WEBP, PDF. Max 2MB each.",
                                         "type": "array",
                                         "items": {
                                             "type": "string",
-                                            "example": "/uploads/evidence/receipt_123.jpg"
+                                            "format": "binary"
                                         },
-                                        "minItems": 1
+                                        "nullable": true
                                     }
                                 },
                                 "type": "object"

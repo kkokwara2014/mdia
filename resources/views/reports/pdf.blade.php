@@ -177,7 +177,8 @@
         <th style="width: 7%;">Year</th>
         <th style="width: 10%;">Status</th>
         <th style="width: 13%;">Payment Date</th>
-        <th style="width: 16%;">Verified By</th>
+        <th style="width: 14%;">Verified By</th>
+        <th style="width: 12%;">Verified At</th>
         <th style="width: 10%;">Notes</th>
       </tr>
     </thead>
@@ -198,11 +199,12 @@
           </td>
           <td>{{ $payment['payment_date'] }}</td>
           <td>{{ $payment['status'] === 'verified' ? ($payment['verified_by_name'] ?? 'N/A') : '-' }}</td>
+          <td>{{ $payment['status'] === 'verified' ? ($payment['verified_at'] ?? '-') : '-' }}</td>
           <td>{{ $payment['notes'] ?? '-' }}</td>
         </tr>
       @empty
         <tr>
-          <td colspan="9" style="text-align:center; color:#999;">No payments found</td>
+          <td colspan="10" style="text-align:center; color:#999;">No payments found</td>
         </tr>
       @endforelse
     </tbody>

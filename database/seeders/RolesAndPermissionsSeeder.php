@@ -13,7 +13,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $permissions = [
             ['name' => 'super_admin', 'description' => 'Full system access'],
             ['name' => 'admin', 'description' => 'Administrative access'],
-            ['name' => 'validate_payment', 'description' => 'Can validate and log payments'],
+            ['name' => 'validate_payment', 'description' => 'Can validate and add payments'],
             ['name' => 'manage_members', 'description' => 'Can manage members'],
             ['name' => 'generate_reports', 'description' => 'Can generate reports'],
         ];
