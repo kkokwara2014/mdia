@@ -1,52 +1,57 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Services;
 
 use App\Models\User;
-use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
+use Symfony\Component\Console\Output\OutputInterface;
 
-class ImportCustomersFromCsv extends Command
+class CustomerCsvImporter
 {
-    protected $signature = 'customers:import 
-                            {file : Path to the CSV file}
-                            {--domain=mdia.member : Email domain for generated emails}
-                            {--dry-run : Parse CSV and show what would be imported without writing to DB}';
-
-    protected $description = 'Import customers from CSV (SN, NAMES, Country of Residence, Phone Number, Registration Year). Generates unique emails and phones when missing.';
-
     protected string $emailDomain = 'mdia.member';
 
     protected array $usedEmails = [];
 
     protected array $usedPhones = [];
 
-    public function handle(): int
+    public function setEmailDomain(string $domain): self
     {
-        $path = $this->argument('file');
-        $this->emailDomain = $this->option('domain');
-        $dryRun = $this->option('dry-run');
+        $this->emailDomain = $domain;
 
-        if (!is_readable($path)) {
-            $this->error("Cannot read file: {$path}");
-            return self::FAILURE;
-        }
+        return $this;
+    }
 
+    /**
+     * @return array{imported: int, skipped: int, errors: string[], rows: int, columns: array<int, string>}
+     */
+    public function import(string $path, bool $dryRun = false, ?OutputInterface $output = null): array
+    {
         $this->usedEmails = User::pluck('email')->map(fn ($e) => strtolower($e))->flip()->all();
         $this->usedPhones = User::pluck('phone')->flip()->all();
 
         $rows = $this->parseCsv($path);
         if (empty($rows)) {
-            $this->error('No valid rows found in CSV.');
-            return self::FAILURE;
+            return [
+                'imported' => 0,
+                'skipped' => 0,
+                'errors' => ['No valid rows found in CSV.'],
+                'rows' => 0,
+                'columns' => [],
+            ];
         }
 
-        $this->info(sprintf('Found %d row(s). Columns: %s', count($rows), implode(', ', array_keys($rows[0]))));
-        $this->newLine();
+        $columns = array_values(array_filter(
+            array_keys($rows[0]),
+            fn ($c) => ! str_starts_with((string) $c, '_')
+        ));
 
-        if ($dryRun) {
-            $this->warn('DRY RUN – no changes will be made.');
-            $this->newLine();
+        if ($output) {
+            $output->writeln(sprintf('<info>Found %d row(s). Columns: %s</info>', count($rows), implode(', ', $columns)));
+            $output->writeln('');
+            if ($dryRun) {
+                $output->writeln('<comment>DRY RUN – no changes will be made.</comment>');
+                $output->writeln('');
+            }
         }
 
         $imported = 0;
@@ -54,11 +59,13 @@ class ImportCustomersFromCsv extends Command
         $errors = [];
 
         foreach ($rows as $index => $row) {
-            $lineNum = $index + 2; // 1-indexed + header
-            $result = $this->processRow($row, $dryRun, $lineNum);
+            $lineNum = $index + 2;
+            $result = $this->processRow($row, $dryRun, $lineNum, $output);
             if ($result === true) {
                 $imported++;
-                $this->line("<info>✓</info> Line {$lineNum}: {$row['NAMES']}");
+                if ($output) {
+                    $output->writeln("<info>✓</info> Line {$lineNum}: {$row['NAMES']}");
+                }
             } elseif ($result === false) {
                 $skipped++;
             } else {
@@ -66,39 +73,47 @@ class ImportCustomersFromCsv extends Command
             }
         }
 
-        $this->newLine();
-        $this->info("Imported: {$imported} | Skipped: {$skipped}");
-        if (!empty($errors)) {
-            $this->newLine();
-            $this->error('Errors:');
-            foreach ($errors as $err) {
-                $this->line("  • {$err}");
+        if ($output) {
+            $output->writeln('');
+            $output->writeln("<info>Imported: {$imported} | Skipped: {$skipped}</info>");
+            if (! empty($errors)) {
+                $output->writeln('');
+                $output->writeln('<error>Errors:</error>');
+                foreach ($errors as $err) {
+                    $output->writeln("  • {$err}");
+                }
             }
         }
 
-        return empty($errors) ? self::SUCCESS : self::FAILURE;
+        return [
+            'imported' => $imported,
+            'skipped' => $skipped,
+            'errors' => $errors,
+            'rows' => count($rows),
+            'columns' => $columns,
+        ];
     }
 
     protected function parseCsv(string $path): array
     {
         $handle = fopen($path, 'r');
-        if (!$handle) {
+        if (! $handle) {
             return [];
         }
 
         $header = fgetcsv($handle);
-        if (!$header) {
+        if (! $header) {
             fclose($handle);
+
             return [];
         }
 
         $header = array_map('trim', $header);
         $required = ['SN', 'NAMES'];
         foreach ($required as $col) {
-            if (!in_array($col, $header, true)) {
-                $this->error("CSV must have column: {$col}");
+            if (! in_array($col, $header, true)) {
                 fclose($handle);
-                return [];
+                throw new \InvalidArgumentException("CSV must have column: {$col}");
             }
         }
 
@@ -131,10 +146,11 @@ class ImportCustomersFromCsv extends Command
                 return $c;
             }
         }
+
         return null;
     }
 
-    protected function processRow(array $row, bool $dryRun, int $lineNum): bool|string
+    protected function processRow(array $row, bool $dryRun, int $lineNum, ?OutputInterface $output = null): bool|string
     {
         $name = trim($row['NAMES'] ?? '');
         $country = $row['_country_col'] ? trim($row[$row['_country_col']] ?? '') : null;
@@ -157,7 +173,10 @@ class ImportCustomersFromCsv extends Command
         }
 
         if ($dryRun) {
-            $this->line("  Would create: {$name} | {$email} | {$phone}");
+            if ($output) {
+                $output->writeln("  Would create: {$name} | {$email} | {$phone}");
+            }
+
             return true;
         }
 
@@ -183,6 +202,7 @@ class ImportCustomersFromCsv extends Command
         if (preg_match('/\b(19|20)\d{2}\b/', $value, $m)) {
             return $m[0];
         }
+
         return null;
     }
 
@@ -191,8 +211,9 @@ class ImportCustomersFromCsv extends Command
         $cleaned = preg_replace('/[^\d+\-\s()]/', '', $raw ?? '');
         if ($cleaned !== '' && strlen($cleaned) >= 7) {
             $phone = preg_replace('/\s+/', ' ', trim($cleaned));
-            if (!$this->isPhoneUsed($phone)) {
+            if (! $this->isPhoneUsed($phone)) {
                 $this->markPhoneUsed($phone);
+
                 return $phone;
             }
         }
@@ -203,6 +224,7 @@ class ImportCustomersFromCsv extends Command
                 return $phone;
             }
         }
+
         return null;
     }
 
@@ -214,6 +236,7 @@ class ImportCustomersFromCsv extends Command
             return null;
         }
         $this->markPhoneUsed($phone);
+
         return $phone;
     }
 
@@ -234,14 +257,15 @@ class ImportCustomersFromCsv extends Command
             return null;
         }
 
-        $candidate = $base . '@' . $this->emailDomain;
+        $candidate = $base.'@'.$this->emailDomain;
         $attempt = 0;
         while ($this->isEmailUsed($candidate)) {
             $attempt++;
             $suffix = $attempt <= 10 ? (string) $attempt : bin2hex(random_bytes(2));
-            $candidate = $base . '.' . $suffix . '@' . $this->emailDomain;
+            $candidate = $base.'.'.$suffix.'@'.$this->emailDomain;
         }
         $this->markEmailUsed($candidate);
+
         return $candidate;
     }
 
@@ -256,14 +280,16 @@ class ImportCustomersFromCsv extends Command
         }, $words);
         $normalized = array_filter($normalized);
         if (empty($normalized)) {
-            return 'user' . bin2hex(random_bytes(3));
+            return 'user'.bin2hex(random_bytes(3));
         }
+
         return implode('.', $normalized);
     }
 
     protected function isEmailUsed(string $email): bool
     {
         $key = strtolower($email);
+
         return isset($this->usedEmails[$key]) || User::where('email', $email)->exists();
     }
 
@@ -278,6 +304,7 @@ class ImportCustomersFromCsv extends Command
         $lowercase = substr(str_shuffle('abcdefghjkmnpqrstuvwxyz'), 0, 4);
         $numbers = substr(str_shuffle('23456789'), 0, 2);
         $special = ['@', '#', '$', '!'][random_int(0, 3)];
-        return str_shuffle($uppercase . $lowercase . $numbers . $special);
+
+        return str_shuffle($uppercase.$lowercase.$numbers.$special);
     }
 }
