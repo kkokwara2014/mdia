@@ -7,11 +7,14 @@ use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\StoreMemberRequest;
 use App\Http\Requests\UpdateMemberRequest;
 use App\Http\Requests\UpdateProfileRequest;
+use App\Mail\PasswordRegeneratedMail;
+use App\Mail\WelcomeMail;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use OpenApi\Attributes as OA;
 
@@ -501,6 +504,8 @@ class MemberController extends Controller
             'payments' => fn ($q) => $q->with(['paymentType', 'verifiedBy'])->orderBy('payment_date', 'desc'),
         ]);
 
+        Mail::to($member->email)->send(new WelcomeMail($member, $plainPassword));
+
         return response()->json([
             'success' => true,
             'message' => 'Member created successfully',
@@ -839,6 +844,8 @@ class MemberController extends Controller
         $user->update([
             'password' => Hash::make($plainPassword),
         ]);
+
+        Mail::to($user->email)->send(new PasswordRegeneratedMail($user, $plainPassword));
 
         return response()->json([
             'success' => true,

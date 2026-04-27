@@ -13,14 +13,6 @@
 @endsection
 
 @section('content')
-@if(isset($successMessage))
-    <div class="alert alert-success alert-dismissible" role="alert">
-        <div class="d-flex">
-            <div>{{ $successMessage }}</div>
-        </div>
-        <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
-    </div>
-@endif
 <div class="page-header d-print-none mb-3">
     <div class="page-header-actions">
         <h2 class="page-title mb-3 mb-md-0">{{ $member->name }}</h2>
@@ -163,7 +155,7 @@
     </div>
 </div>
 
-@if(isset($generatedPassword))
+@if(session('generatedPassword'))
 <div class="modal modal-blur fade" id="passwordModal" tabindex="-1" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -190,8 +182,8 @@
                 </div>
                 <div class="mb-2 text-muted small">Generated Password</div>
                 <div class="d-flex align-items-center gap-2">
-                    <code id="passwordDisplay" class="flex-grow-1 p-2 bg-light rounded" style="font-family: monospace; font-size: var(--font-size-base); letter-spacing: 0.125em;">{{ $generatedPassword }}</code>
-                    <button type="button" class="btn btn-icon btn-ghost-secondary" onclick="copyToClipboard('{{ $generatedPassword }}', this)" title="Copy password">
+                    <code id="passwordDisplay" class="flex-grow-1 p-2 bg-light rounded" style="font-family: monospace; font-size: var(--font-size-base); letter-spacing: 0.125em;">{{ session('generatedPassword') }}</code>
+                    <button type="button" class="btn btn-icon btn-ghost-secondary" onclick="copyToClipboard('{{ session('generatedPassword') }}', this)" title="Copy password">
                         <i class="ti ti-copy"></i>
                     </button>
                 </div>
@@ -220,7 +212,7 @@ function copyToClipboard(text, button) {
     });
 }
 
-@if(isset($generatedPassword))
+@if(session('generatedPassword'))
 document.addEventListener('DOMContentLoaded', function() {
     const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
     passwordModal.show();

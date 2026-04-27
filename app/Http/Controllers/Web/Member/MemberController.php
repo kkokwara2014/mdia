@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Web\Member;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreMemberRequest;
 use App\Http\Requests\UpdateMemberRequest;
+use App\Mail\PasswordRegeneratedMail;
+use App\Mail\WelcomeMail;
 use App\Models\Role;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -13,6 +15,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -117,13 +120,11 @@ class MemberController extends Controller
             $member->roles()->sync([$memberRole->id]);
         }
 
-        $member->load(['roles', 'payments' => fn ($q) => $q->with(['paymentType', 'verifiedBy'])->orderBy('payment_date', 'desc')]);
+        Mail::to($member->email)->send(new WelcomeMail($member, $plainPassword));
 
-        return view('members.show', [
-            'member' => $member,
-            'generatedPassword' => $plainPassword,
-            'successMessage' => 'Member created successfully.'
-        ]);
+        return redirect()->route('members.show', ['user' => $member->uuid])
+            ->with('generatedPassword', $plainPassword)
+            ->with('success', 'Member created successfully.');
     }
     
 
@@ -228,13 +229,11 @@ class MemberController extends Controller
             'password' => Hash::make($plainPassword),
         ]);
 
-        $user->load(['roles', 'payments' => fn ($q) => $q->with(['paymentType', 'verifiedBy'])->orderBy('payment_date', 'desc')]);
+        Mail::to($user->email)->send(new PasswordRegeneratedMail($user, $plainPassword));
 
-        return view('members.show', [
-            'member' => $user,
-            'generatedPassword' => $plainPassword,
-            'successMessage' => 'Password regenerated successfully.'
-        ]);
+        return redirect()->route('members.show', ['user' => $user->uuid])
+            ->with('generatedPassword', $plainPassword)
+            ->with('success', 'Password regenerated successfully.');
     }
 
     public function downloadPdf(): Response
